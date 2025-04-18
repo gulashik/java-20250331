@@ -114,6 +114,7 @@ public class Main {
 
         System.out.println("Current array: " + Arrays.toString(ints));
 
+        // Array's poise point is (Cumulative total * 2 = Total sum)
         boolean found = false;
         int cumSum = 0;
         for (int i = 0; i < ints.length; i++) {
