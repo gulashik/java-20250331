@@ -17,8 +17,8 @@ public class Main {
         compareArrayHalves(1, 2, 13, 4, 5, 6);
         compareArrayHalves(1, 1, 1, 1, 1, 1);
 
-        hasArayPoisePoint(1, 2, 3, 6);
-        hasArayPoisePoint(1, 2, 3, 16);
+        hasArrayPoisePoint(1, 2, 3, 6);
+        hasArrayPoisePoint(1, 2, 3, 16);
 
         isSorted(true, 1, 22, 33);
         isSorted(false, 1, 2, 3);
@@ -107,40 +107,25 @@ public class Main {
      * Точка находится между элементами.
      * Пример: { 1, 1, 1, 1, 1, | 5 }, { 5, | 3, 4, -2 }, { 7, 2, 2, 2 }, { 9, 4 }
      */
-    private static void hasArayPoisePoint(int... ints) {
+    private static void hasArrayPoisePoint(int... ints) {
         printMethodName();
 
-        var sumLeftToRight = new int[ints.length];
-        var sumRightToLeft = new int[ints.length];
-
-        // Running total from left to right
-        int sumLeft = 0;
-        for (int i = 0; i < ints.length; i++) {
-            sumLeft += ints[i];
-            sumLeftToRight[i] = sumLeft;
-        }
-
-        // Running total from right to left
-        int sumRight = 0;
-        for (int i = ints.length - 1; i >= 0; i--) {
-            sumRight += ints[i];
-            sumRightToLeft[i] = sumRight;
-        }
+        int total = Arrays.stream(ints).sum();
 
         System.out.println("Current array: " + Arrays.toString(ints));
-        //System.out.println("Running total from left to right: "+ Arrays.toString(sumLeftToRight));
-        //System.out.println("Running total from right to left:" + Arrays.toString(sumRightToLeft));
 
-        // Array's poise point
         boolean found = false;
-        for (int i = 0; i < ints.length - 1; i++) {
-            if (sumLeftToRight[i] == sumRightToLeft[i + 1]) {
+        int cumSum = 0;
+        for (int i = 0; i < ints.length; i++) {
+            cumSum += ints[i];
+            if( (cumSum * 2) == total ) {
                 found = true;
                 System.out.printf(
                     "Found array's poise point. Point between (index-%s value-%s) and (index-%s value-%s)%n",
                     i, ints[i],
                     i + 1, ints[i + 1]
                 );
+                break;
             }
         }
 
