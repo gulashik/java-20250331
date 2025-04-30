@@ -1,15 +1,8 @@
 package ru.otus.hw.hw04;
 
-import java.time.Year;
+import ru.otus.hw.hw04.entity.Box;
+import ru.otus.hw.hw04.entity.User;
 
-/*
-Попробуйте реализовать класс по его описания: объекты класса Коробка должны иметь размеры и цвет. Коробку можно открывать и закрывать.
-Коробку можно перекрашивать. 
-Изменить размер коробки после создания нельзя. 
-У коробки должен быть метод, печатающий информацию о ней в консоль. 
-В коробку можно складывать предмет (если в ней нет предмета), или выкидывать его оттуда (только если предмет в ней есть), 
-только при условии что коробка открыта (предметом читаем просто строку). Выполнение методов должно сопровождаться выводом сообщений в консоль. 
-*/
 public class Main {
     public static void main(String[] args) {
         User[] users = new User[10];
@@ -29,8 +22,21 @@ public class Main {
         for (User user : users) {
             if (user.getAge() > 40) {
                 user.printInfo();
-                System.out.println();
             }
         }
+
+        Box box = new Box(10, "red");
+        box.printInfo();
+        box.close();
+        box.printInfo();
+        box.setColor("green");
+        box.printInfo();
+        box.putItem("apple");
+        box.printInfo();
+        box.open();
+        box.putItem("banana");
+        box.printInfo();
+        box.removeItem();
+        box.printInfo();
     }
 }

@@ -1,4 +1,4 @@
-package ru.otus.hw.hw04;
+package ru.otus.hw.hw04.entity;
 
 import java.time.Year;
 
@@ -30,5 +30,6 @@ public class User {
         System.out.println("Год рождения: " + birthYear);
         System.out.println("Возраст: " + getAge());
         System.out.println("e-mail: " + email);
+        System.out.println("-".repeat(20));
     }
 }
