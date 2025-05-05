@@ -3,5 +3,36 @@ package ru.otus.hw.hw05;
 public class Main {
     public static void main(String[] args) {
 
+        Animal cat = new Cat("Murka", 5, 0, 100);
+        Animal dog = new Dog("Bobik", 4, 1, 100);
+        Animal horse = new Horse("Spirit", 8, 2, 100);
+
+        showInfo(cat, dog, horse);
+
+        System.out.println("Cat running 20m: " + cat.run(20) + " seconds\n");
+        System.out.println("Dog running 20m: " + dog.run(20) + " seconds\n");
+        System.out.println("Horse running 20m: " + horse.run(20) + " seconds\n");
+
+        showInfo(cat, dog, horse);
+
+        System.out.println("Cat swimming 20m: " + cat.swim(20) + " seconds\n");
+        System.out.println("Dog swimming 20m: " + dog.swim(20) + " seconds\n");
+        System.out.println("Horse swimming 20m: " + horse.swim(20) + " seconds\n");
+
+        showInfo(cat, dog, horse);
+
+        System.out.println("Cat running 20m: " + cat.run(20) + " seconds\n");
+        System.out.println("Dog running 20m: " + dog.run(20) + " seconds\n");
+        System.out.println("Horse running 20m: " + horse.run(20) + " seconds\n");
+
+        showInfo(cat, dog, horse);
+    }
+
+    private static void showInfo(Animal... animals) {
+        System.out.println("Info");
+        for (Animal animal : animals) {
+            animal.info();
+        }
+        System.out.println();
     }
 }
