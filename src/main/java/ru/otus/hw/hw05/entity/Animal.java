@@ -1,4 +1,4 @@
-package ru.otus.hw.hw05;
+package ru.otus.hw.hw05.entity;
 
 public abstract class Animal {
     protected final String name;
@@ -19,11 +19,11 @@ public abstract class Animal {
         int stamina
     ) {
         this.name = name;
-        this.runSpeed = runSpeed;
+        this.runSpeed = isPositive(runSpeed, "Run speed");
         this.canSwim = canSwim;
-        this.swimSpeed = canSwim ? swimSpeed : 0;
-        this.tirednessSwimFactor = tirednessSwimFactor;
-        this.stamina = stamina;
+        this.swimSpeed = canSwim ? isPositive(swimSpeed, "Swim speed") : 0;
+        this.tirednessSwimFactor = isPositive(tirednessSwimFactor, "Tiredness swim factor");
+        this.stamina = isPositive(stamina, "Stamina");
         this.tired = false;
     }
 
@@ -59,5 +59,14 @@ public abstract class Animal {
 
     public void info() {
         System.out.printf("%s - Stamina: %d, Tired: %b%n", name, stamina, tired);
+    }
+
+    private static <T extends Number> T isPositive(T value, String description) {
+        if (value.doubleValue() <= 0) {
+            String[] classFullName = new Throwable().getStackTrace()[2].getClassName().split("\\.");
+            String SimpleClassName = classFullName[classFullName.length - 1];
+            throw new IllegalArgumentException("%s value in '%s' must be positive, but now is %s".formatted(SimpleClassName, description, String.valueOf(value)));
+        }
+        return value;
     }
 }

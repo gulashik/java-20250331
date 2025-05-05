@@ -1,9 +1,14 @@
 package ru.otus.hw.hw05;
 
+import ru.otus.hw.hw05.entity.Animal;
+import ru.otus.hw.hw05.entity.Cat;
+import ru.otus.hw.hw05.entity.Dog;
+import ru.otus.hw.hw05.entity.Horse;
+
 public class Main {
     public static void main(String[] args) {
 
-        Animal cat = new Cat("Murka", 5, 0, 100);
+        Animal cat = new Cat("Murka", 5, 100);
         Animal dog = new Dog("Bobik", 4, 1, 100);
         Animal horse = new Horse("Spirit", 8, 2, 100);
 
