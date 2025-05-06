@@ -2,6 +2,8 @@ package ru.otus.hw.hw05.entity;
 
 import lombok.ToString;
 
+import java.util.Optional;
+
 @ToString(onlyExplicitlyIncluded = true)
 public abstract class Animal {
     private static final int TIREDNESS_RUN_FACTOR = 1;
@@ -27,12 +29,12 @@ public abstract class Animal {
         int tirednessSwimFactor,
         int stamina
     ) {
-        this.name = name;
-        this.runSpeed = checkPositive(runSpeed, "Run speed");
+        this.name = Validator.normilizeName(name);
+        this.runSpeed = Validator.checkPositive(runSpeed, "Run speed");
         this.canSwim = canSwim;
-        this.swimSpeed = canSwim ? checkPositive(swimSpeed, "Swim speed") : 0;
-        this.tirednessSwimFactor = canSwim ? checkPositive(tirednessSwimFactor, "Tiredness swim factor") : 0;
-        this.stamina = checkPositive(stamina, "Stamina");
+        this.swimSpeed = canSwim ? Validator.checkPositive(swimSpeed, "Swim speed") : 0;
+        this.tirednessSwimFactor = canSwim ? Validator.checkPositive(tirednessSwimFactor, "Tiredness swim factor") : 0;
+        this.stamina = Validator.checkPositive(stamina, "Stamina");
         this.tired = false;
     }
 
@@ -81,15 +83,22 @@ public abstract class Animal {
         return distance / speed;
     }
 
-    private static <T extends Number> T checkPositive(T value, String description) {
-        if (value.doubleValue() <= 0) {
-            String[] classFullName = new Throwable().getStackTrace()[2].getClassName().split("\\.");
-            String simpleClassName = classFullName[classFullName.length - 1];
-            throw new IllegalArgumentException(
-                "%s value in '%s' must be positive, but now is %s"
-                    .formatted(simpleClassName, description, String.valueOf(value))
-            );
+    private abstract static class Validator {
+
+        private static String normilizeName(String name) {
+            return Optional.ofNullable(name).filter(s -> s.length() > 1).orElse("Animal name undefined");
         }
-        return value;
+
+        private static <T extends Number> T checkPositive(T value, String description) {
+            if (value.doubleValue() <= 0) {
+                String[] classFullName = new Throwable().getStackTrace()[2].getClassName().split("\\.");
+                String simpleClassName = classFullName[classFullName.length - 1];
+                throw new IllegalArgumentException(
+                    "%s value in '%s' must be positive, but now is %s"
+                        .formatted(simpleClassName, description, String.valueOf(value))
+                );
+            }
+            return value;
+        }
     }
 }

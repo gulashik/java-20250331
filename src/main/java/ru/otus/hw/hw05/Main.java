@@ -12,7 +12,10 @@ public class Main {
         var dog = new Dog("Bobik", 4, 1, 100);
         var horse = new Horse("Spirit", 8, 2, 100);
 
-        showInfo(cat, dog, horse);
+        var nulledCat = new Cat(null, 5, 100);
+        var emptyDog = new Dog("", 4, 1, 100);
+
+        showInfo(cat, dog, horse, nulledCat, emptyDog);
 
         System.out.println("Cat running 20m: " + cat.run(20) + " seconds\n");
         System.out.println("Dog running 20m: " + dog.run(20) + " seconds\n");
