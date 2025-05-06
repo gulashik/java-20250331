@@ -64,8 +64,8 @@ public abstract class Animal {
     private static <T extends Number> T isPositive(T value, String description) {
         if (value.doubleValue() <= 0) {
             String[] classFullName = new Throwable().getStackTrace()[2].getClassName().split("\\.");
-            String SimpleClassName = classFullName[classFullName.length - 1];
-            throw new IllegalArgumentException("%s value in '%s' must be positive, but now is %s".formatted(SimpleClassName, description, String.valueOf(value)));
+            String simpleClassName = classFullName[classFullName.length - 1];
+            throw new IllegalArgumentException("%s value in '%s' must be positive, but now is %s".formatted(simpleClassName, description, String.valueOf(value)));
         }
         return value;
     }
