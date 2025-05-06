@@ -8,9 +8,9 @@ import ru.otus.hw.hw05.entity.Horse;
 public class Main {
     public static void main(String[] args) {
 
-        Animal cat = new Cat("Murka", 5, 100);
-        Animal dog = new Dog("Bobik", 4, 1, 100);
-        Animal horse = new Horse("Spirit", 8, 2, 100);
+        var cat = new Cat("Murka", 5, 100);
+        var dog = new Dog("Bobik", 4, 1, 100);
+        var horse = new Horse("Spirit", 8, 2, 100);
 
         showInfo(cat, dog, horse);
 

@@ -1,15 +1,21 @@
 package ru.otus.hw.hw05.entity;
 
+import lombok.ToString;
+
+@ToString(onlyExplicitlyIncluded = true)
 public abstract class Animal {
     private static final int TIREDNESS_RUN_FACTOR = 1;
 
+    @ToString.Include
     protected final String name;
     protected final double runSpeed;
     protected final boolean canSwim;
     protected final double swimSpeed;
     protected final int tirednessSwimFactor;
 
+    @ToString.Include
     protected int stamina;
+    @ToString.Include
     protected boolean tired;
 
     public Animal(
@@ -59,11 +65,6 @@ public abstract class Animal {
 
     public void info() {
         System.out.println(this);
-    }
-
-    @Override
-    public String toString() {
-        return "%s - Stamina: %d, Tired: %b".formatted(name, stamina, tired);
     }
 
     private boolean isTiredAndCorrectTired(int staminaCost) {
