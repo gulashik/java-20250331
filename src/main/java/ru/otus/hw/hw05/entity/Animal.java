@@ -1,6 +1,8 @@
 package ru.otus.hw.hw05.entity;
 
 public abstract class Animal {
+    private static final int TIREDNESS_RUN_FACTOR = 1;
+
     protected final String name;
     protected final double runSpeed;
     protected final boolean canSwim;
@@ -28,14 +30,18 @@ public abstract class Animal {
     }
 
     public double run(int distance) {
-        if (stamina >= distance) {
-            stamina -= distance;
-            System.out.printf("%s runs at a speed of %.2f m/s and achieves a result of %d meters in his run%n", name, runSpeed, distance);
-            return distance / runSpeed;
+
+        int staminaCost = distance * TIREDNESS_RUN_FACTOR;
+        if(stamina < staminaCost) {
+            System.out.printf("%s is too tired to run%n", name);
+            tired = true;
+            return -1;
         }
-        tired = true;
-        System.out.printf("%s is too tired to run %d meters%n", name, distance);
-        return -1;
+
+        double time = getTimeAndCorrectStamina(distance, staminaCost, runSpeed);
+        System.out.printf("%s runs at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n", name, runSpeed, distance, time);
+        return time;
+
     }
 
     public double swim(int distance) {
@@ -46,19 +52,24 @@ public abstract class Animal {
         }
 
         int staminaCost = distance * tirednessSwimFactor;
-        if (stamina >= staminaCost) {
-            stamina -= staminaCost;
-            System.out.printf("%s is swimming %d meters%n", name, distance);
-            return distance / swimSpeed;
+        if (stamina < staminaCost) {
+            System.out.printf("%s is too tired to swim%n", name);
+            tired = true;
+            return -1;
         }
 
-        System.out.printf("%s is too tired to swim%n", name);
-        tired = true;
-        return -1;
+        double time = getTimeAndCorrectStamina(distance, staminaCost, swimSpeed);
+        System.out.printf("%s is swimming at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n", name, swimSpeed, distance, time);
+        return time;
     }
 
     public void info() {
         System.out.printf("%s - Stamina: %d, Tired: %b%n", name, stamina, tired);
+    }
+
+    private double getTimeAndCorrectStamina(int distance, int staminaCost, double speed) {
+        stamina -= staminaCost;
+        return distance / speed;
     }
 
     private static <T extends Number> T isPositive(T value, String description) {
