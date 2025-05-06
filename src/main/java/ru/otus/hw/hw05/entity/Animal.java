@@ -70,7 +70,7 @@ public abstract class Animal {
     }
 
     public void info() {
-        System.out.printf("%s - Stamina: %d, Tired: %b%n", name, stamina, tired);
+        System.out.println(this);
     }
 
     private double getTimeAndCorrectStamina(int distance, int staminaCost, double speed) {
@@ -88,5 +88,10 @@ public abstract class Animal {
             );
         }
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "%s - Stamina: %d, Tired: %b".formatted(name, stamina, tired);
     }
 }
