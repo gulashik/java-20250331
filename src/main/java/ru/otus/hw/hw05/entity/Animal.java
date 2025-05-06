@@ -41,7 +41,6 @@ public abstract class Animal {
             name, runSpeed, distance, time
         );
         return time;
-
     }
 
     public double swim(int distance) {
