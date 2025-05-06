@@ -24,7 +24,7 @@ public abstract class Animal {
         this.runSpeed = checkPositive(runSpeed, "Run speed");
         this.canSwim = canSwim;
         this.swimSpeed = canSwim ? checkPositive(swimSpeed, "Swim speed") : 0;
-        this.tirednessSwimFactor = checkPositive(tirednessSwimFactor, "Tiredness swim factor");
+        this.tirednessSwimFactor = canSwim ? checkPositive(tirednessSwimFactor, "Tiredness swim factor") : 0;
         this.stamina = checkPositive(stamina, "Stamina");
         this.tired = false;
     }
@@ -44,11 +44,6 @@ public abstract class Animal {
     }
 
     public double swim(int distance) {
-
-        if (!canSwim) {
-            System.out.printf("%s cannot swim!%n", name);
-            return -1;
-        }
 
         int staminaCost = distance * tirednessSwimFactor;
 
