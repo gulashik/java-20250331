@@ -29,7 +29,7 @@ public abstract class Animal {
         int tirednessSwimFactor,
         int stamina
     ) {
-        this.name = Validator.normilizeName(name);
+        this.name = Validator.normalizeName(name);
         this.runSpeed = Validator.checkPositive(runSpeed, "Run speed");
         this.canSwim = canSwim;
         this.swimSpeed = canSwim ? Validator.checkPositive(swimSpeed, "Swim speed") : 0;
@@ -85,7 +85,7 @@ public abstract class Animal {
 
     private abstract static class Validator {
 
-        private static String normilizeName(String name) {
+        private static String normalizeName(String name) {
             return Optional.ofNullable(name).filter(s -> s.length() > 1).orElse("Animal name undefined");
         }
 
