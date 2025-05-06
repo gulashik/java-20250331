@@ -21,24 +21,21 @@ public abstract class Animal {
         int stamina
     ) {
         this.name = name;
-        this.runSpeed = isPositive(runSpeed, "Run speed");
+        this.runSpeed = checkPositive(runSpeed, "Run speed");
         this.canSwim = canSwim;
-        this.swimSpeed = canSwim ? isPositive(swimSpeed, "Swim speed") : 0;
-        this.tirednessSwimFactor = isPositive(tirednessSwimFactor, "Tiredness swim factor");
-        this.stamina = isPositive(stamina, "Stamina");
+        this.swimSpeed = canSwim ? checkPositive(swimSpeed, "Swim speed") : 0;
+        this.tirednessSwimFactor = checkPositive(tirednessSwimFactor, "Tiredness swim factor");
+        this.stamina = checkPositive(stamina, "Stamina");
         this.tired = false;
     }
 
     public double run(int distance) {
 
         int staminaCost = distance * TIREDNESS_RUN_FACTOR;
-        if(stamina < staminaCost) {
-            System.out.printf("%s is too tired to run%n", name);
-            tired = true;
-            return -1;
-        }
 
-        double time = getTimeAndCorrectStamina(distance, staminaCost, runSpeed);
+        if(isTiredAndCorrectTired(staminaCost)) return -1;
+
+        double time = calcTimeAndCorrectStamina(distance, staminaCost, runSpeed);
         System.out.printf(
             "%s runs at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n",
             name, runSpeed, distance, time
@@ -55,13 +52,10 @@ public abstract class Animal {
         }
 
         int staminaCost = distance * tirednessSwimFactor;
-        if (stamina < staminaCost) {
-            System.out.printf("%s is too tired to swim%n", name);
-            tired = true;
-            return -1;
-        }
 
-        double time = getTimeAndCorrectStamina(distance, staminaCost, swimSpeed);
+        if(isTiredAndCorrectTired(staminaCost)) return -1;
+
+        double time = calcTimeAndCorrectStamina(distance, staminaCost, swimSpeed);
         System.out.printf(
             "%s is swimming at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n",
             name, swimSpeed, distance, time
@@ -73,12 +67,25 @@ public abstract class Animal {
         System.out.println(this);
     }
 
-    private double getTimeAndCorrectStamina(int distance, int staminaCost, double speed) {
+    @Override
+    public String toString() {
+        return "%s - Stamina: %d, Tired: %b".formatted(name, stamina, tired);
+    }
+
+    private boolean isTiredAndCorrectTired(int staminaCost) {
+        if(stamina < staminaCost) {
+            System.out.printf("%s is too tired to move%n", name);
+            tired = true;
+        }
+        return tired;
+    }
+
+    private double calcTimeAndCorrectStamina(int distance, int staminaCost, double speed) {
         stamina -= staminaCost;
         return distance / speed;
     }
 
-    private static <T extends Number> T isPositive(T value, String description) {
+    private static <T extends Number> T checkPositive(T value, String description) {
         if (value.doubleValue() <= 0) {
             String[] classFullName = new Throwable().getStackTrace()[2].getClassName().split("\\.");
             String simpleClassName = classFullName[classFullName.length - 1];
@@ -88,10 +95,5 @@ public abstract class Animal {
             );
         }
         return value;
-    }
-
-    @Override
-    public String toString() {
-        return "%s - Stamina: %d, Tired: %b".formatted(name, stamina, tired);
     }
 }
