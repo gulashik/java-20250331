@@ -5,6 +5,7 @@ import lombok.ToString;
 @ToString(onlyExplicitlyIncluded = true)
 public abstract class Animal {
     private static final int TIREDNESS_RUN_FACTOR = 1;
+    private static final int UNDEFINED_VALUE = -1;
 
     @ToString.Include
     protected final String name;
@@ -39,7 +40,7 @@ public abstract class Animal {
 
         int staminaCost = distance * TIREDNESS_RUN_FACTOR;
 
-        if(isTiredAndCorrectTired(staminaCost)) return -1;
+        if(isTiredAndCorrectTired(staminaCost)) return UNDEFINED_VALUE;
 
         double time = calcTimeAndCorrectStamina(distance, staminaCost, runSpeed);
         System.out.printf(
