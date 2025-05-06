@@ -39,7 +39,10 @@ public abstract class Animal {
         }
 
         double time = getTimeAndCorrectStamina(distance, staminaCost, runSpeed);
-        System.out.printf("%s runs at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n", name, runSpeed, distance, time);
+        System.out.printf(
+            "%s runs at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n",
+            name, runSpeed, distance, time
+        );
         return time;
 
     }
@@ -59,7 +62,10 @@ public abstract class Animal {
         }
 
         double time = getTimeAndCorrectStamina(distance, staminaCost, swimSpeed);
-        System.out.printf("%s is swimming at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n", name, swimSpeed, distance, time);
+        System.out.printf(
+            "%s is swimming at a speed of %.2f m/s and achieves the result of %d meters in his run by time %.2f sec%n",
+            name, swimSpeed, distance, time
+        );
         return time;
     }
 
@@ -76,7 +82,10 @@ public abstract class Animal {
         if (value.doubleValue() <= 0) {
             String[] classFullName = new Throwable().getStackTrace()[2].getClassName().split("\\.");
             String simpleClassName = classFullName[classFullName.length - 1];
-            throw new IllegalArgumentException("%s value in '%s' must be positive, but now is %s".formatted(simpleClassName, description, String.valueOf(value)));
+            throw new IllegalArgumentException(
+                "%s value in '%s' must be positive, but now is %s"
+                    .formatted(simpleClassName, description, String.valueOf(value))
+            );
         }
         return value;
     }
