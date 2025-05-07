@@ -21,6 +21,12 @@ public class Main {
         }
         printArray(cats);
         System.out.println(plate);
+
+        System.out.println("Adding too much food\n");
+
+        plate.addFood(999999999);
+        System.out.println("Food amount is correct");
+        System.out.println(plate);
     }
 
     private static void printArray(Cat[] array) {
