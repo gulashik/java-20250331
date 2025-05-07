@@ -10,12 +10,24 @@ public class Main {
             new Cat("Murzik", 7),
             new Cat("Pushok", 3)
         };
+        printArray(cats);
 
         Plate plate = new Plate(10);
+        System.out.println(plate + "\n");
 
         for (Cat cat : cats) {
             cat.eat(plate);
             System.out.println(cat.getName() + " is " + (cat.isSatisfied() ? "satisfied" : "hungry"));
         }
+        printArray(cats);
+        System.out.println(plate);
+    }
+
+    private static void printArray(Cat[] array) {
+        System.out.println();
+        for (var item : array) {
+            System.out.println(item);
+        }
+        System.out.println();
     }
 }

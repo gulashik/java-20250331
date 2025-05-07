@@ -25,4 +25,13 @@ public class Cat {
     public boolean isSatisfied() {
         return satisfied;
     }
+
+    @Override
+    public String toString() {
+        return "Cat{" +
+            "name='" + name + '\'' +
+            ", appetite=" + appetite +
+            ", satisfied=" + satisfied +
+            '}';
+    }
 }

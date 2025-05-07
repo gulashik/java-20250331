@@ -20,4 +20,12 @@ public class Plate {
     public void addFood(int amount) {
         food = Math.min(capacity, food + amount);
     }
+
+    @Override
+    public String toString() {
+        return "Plate{" +
+            "capacity=" + capacity +
+            ", food=" + food +
+            '}';
+    }
 }
