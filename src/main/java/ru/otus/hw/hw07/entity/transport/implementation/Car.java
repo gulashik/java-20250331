@@ -2,10 +2,11 @@ package ru.otus.hw.hw07.entity.transport.implementation;
 
 import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
-import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
+import ru.otus.hw.hw07.entity.transport.TerrainMovementConsumption;
 import ru.otus.hw.hw07.entity.transport.Transport;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Класс представляет транспортное средство типа "Машина".
@@ -17,13 +18,10 @@ import java.util.List;
  *
  * @see Transport
  */
-public class Car extends TerrainMovementLimit implements Transport {
+public class Car extends TerrainMovementConsumption implements Transport {
 
     @Getter
     private final String name;
-    private final double fuelConsumption; // расход топлива на 1 км
-
-    private double fuel;
 
     /**
      * Создает новый экземпляр машины с указанными параметрами.
@@ -33,11 +31,14 @@ public class Car extends TerrainMovementLimit implements Transport {
      * @param fuelConsumption расход топлива в литрах на 1 км пути
      */
     public Car(String name, double initialFuel, double fuelConsumption) {
-        super(List.of(TerrainType.SWAMP, TerrainType.DENSE_FOREST));
+        super(
+            initialFuel,
+            fuelConsumption,
+            Map.of(),
+            List.of(TerrainType.SWAMP, TerrainType.DENSE_FOREST)
+        );
 
         this.name = name;
-        this.fuel = initialFuel;
-        this.fuelConsumption = fuelConsumption;
     }
 
     @Override
@@ -47,20 +48,19 @@ public class Car extends TerrainMovementLimit implements Transport {
             return false;
         }
 
-        double requiredFuel = distance * fuelConsumption;
-        if (fuel < requiredFuel) {
-            System.out.println("Недостаточно топлива для поездки. Осталось: " + fuel + " л.");
-            return false;
+        boolean moved = super.move(distance, terrain);
+
+        if (moved) {
+            System.out.println("Машина " + name + " проехала " + distance + " км по " + terrain + ". Осталось топлива: " + currentResourceValue + " л.");
+        } else {
+            System.out.println("Недостаточно топлива для поездки. Осталось: " + currentResourceValue + " л.");
         }
 
-        fuel -= requiredFuel;
-        System.out.println("Машина " + name + " проехала " + distance + " км по " + terrain +
-            ". Осталось топлива: " + fuel + " л.");
-        return true;
+        return moved;
     }
 
     public void refuel(double amount) {
-        fuel += amount;
-        System.out.println("Машина " + name + " заправлена. Текущий запас топлива: " + fuel + " л.");
+        currentResourceValue += amount;
+        System.out.println("Машина " + name + " заправлена. Текущий запас топлива: " + currentResourceValue + " л.");
     }
 }
