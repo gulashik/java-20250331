@@ -9,14 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Класс представляет транспортное средство типа "Машина".
- * Машина может передвигаться по определённым типам местности и расходует топливо
+ * Класс Машина представляет собой транспортное средство,
+ * которое может передвигаться по определённым типам местности и расходует топливо
  * в зависимости от пройденного расстояния.
- * Машина не способна передвигаться по густому лесу и болотам.
- *
- * Реализует интерфейс Transport
  *
  * @see Transport
+ * @see TerrainMovementConsumption
  */
 public class Car extends TerrainMovementConsumption implements Transport {
 
@@ -41,6 +39,14 @@ public class Car extends TerrainMovementConsumption implements Transport {
         this.name = name;
     }
 
+    /**
+     * Перемещает машину на указанное расстояние по заданной местности.
+     * 
+     * @param distance расстояние в километрах, которое нужно преодолеть
+     * @param terrain тип местности, по которой происходит перемещение
+     * @return true, если перемещение успешно выполнено (достаточно топлива и местность подходящая),
+     *         false - если перемещение невозможно
+     */
     @Override
     public boolean move(double distance, TerrainType terrain) {
         if (cantMoveOn(terrain)) {
@@ -59,6 +65,11 @@ public class Car extends TerrainMovementConsumption implements Transport {
         return moved;
     }
 
+    /**
+     * Заправляет машину указанным количеством топлива.
+     * 
+     * @param amount количество топлива для заправки в литрах
+     */
     public void refuel(double amount) {
         currentResourceValue += amount;
         System.out.println("Машина " + name + " заправлена. Текущий запас топлива: " + currentResourceValue + " л.");

@@ -1,8 +1,5 @@
 package ru.otus.hw.hw07.entity;
 
-
-import lombok.RequiredArgsConstructor;
-
 /** Перечисление типов местности */
 public enum TerrainType {
     DENSE_FOREST("Густой лес"),
