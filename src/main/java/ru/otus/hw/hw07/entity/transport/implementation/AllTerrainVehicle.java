@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.Transport;
 
@@ -7,6 +8,7 @@ import ru.otus.hw.hw07.entity.transport.Transport;
  * Класс Вездеход
  */
 public class AllTerrainVehicle implements Transport {
+    @Getter
     private final String name;
     private final double fuelConsumption; // расход топлива на 1 км
 
@@ -38,11 +40,6 @@ public class AllTerrainVehicle implements Transport {
         System.out.println("Вездеход " + name + " проехал " + distance + " км по " + terrain +
             ". Осталось топлива: " + fuel + " л.");
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

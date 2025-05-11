@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
 import ru.otus.hw.hw07.entity.transport.Transport;
@@ -8,6 +9,7 @@ import java.util.List;
 
 /** Класс Велосипед */
 public class Bicycle extends TerrainMovementLimit implements Transport {
+    @Getter
     private final String name;
 
     public Bicycle(String name) {
@@ -25,10 +27,4 @@ public class Bicycle extends TerrainMovementLimit implements Transport {
         System.out.println("Велосипед " + name + " проехал " + distance + " км по " + terrain);
         return true;
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
 }

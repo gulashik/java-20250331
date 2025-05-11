@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
 import ru.otus.hw.hw07.entity.transport.Transport;
@@ -17,14 +18,12 @@ import java.util.List;
  * @see Transport
  */
 public class Car extends TerrainMovementLimit implements Transport {
-//    /**
-//     * <code>CANT_MOVE_TERRAINS</code> - список местностей, где не может двигаться сущность
-//     * */
-//    private final List<TerrainType> CANT_MOVE_TERRAINS = List.of(TerrainType.SWAMP, TerrainType.DENSE_FOREST);
 
+    @Getter
     private final String name;
-    private double fuel;
     private final double fuelConsumption; // расход топлива на 1 км
+
+    private double fuel;
 
     /**
      * Создает новый экземпляр машины с указанными параметрами.
@@ -58,11 +57,6 @@ public class Car extends TerrainMovementLimit implements Transport {
         System.out.println("Машина " + name + " проехала " + distance + " км по " + terrain +
             ". Осталось топлива: " + fuel + " л.");
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public void refuel(double amount) {

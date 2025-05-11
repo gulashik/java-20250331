@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
 import ru.otus.hw.hw07.entity.transport.Transport;
@@ -9,6 +10,7 @@ import java.util.List;
 /** Класс Лошадь */
 public class Horse extends TerrainMovementLimit implements Transport {
 
+    @Getter
     private final String name;
     private final double energyConsumption; // расход энергии на 1 км
 
@@ -38,11 +40,6 @@ public class Horse extends TerrainMovementLimit implements Transport {
         System.out.println("Лошадь " + name + " проскакала " + distance + " км по " + terrain +
             ". Осталось энергии: " + energy);
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public void rest(double hours) {
