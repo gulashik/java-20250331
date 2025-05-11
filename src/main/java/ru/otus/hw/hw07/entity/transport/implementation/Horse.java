@@ -60,15 +60,15 @@ public class Horse extends TerrainMovementConsumption implements Transport {
             return false;
         }
 
-        boolean moved = super.move(distance, terrain);
+        boolean isMoved = super.move(distance, terrain);
 
-        if (moved) {
+        if (isMoved) {
             System.out.println("Лошадь " + name + " проскакала " + distance + " км по " + terrain + ". Осталось энергии: " + currentResourceValue);
         } else {
             System.out.println("Лошадь " + name + " слишком устала для поездки. Осталось энергии: " + currentResourceValue);
         }
 
-        return moved;
+        return isMoved;
     }
 
     /**

@@ -54,15 +54,15 @@ public class Car extends TerrainMovementConsumption implements Transport {
             return false;
         }
 
-        boolean moved = super.move(distance, terrain);
+        boolean isMoved = super.move(distance, terrain);
 
-        if (moved) {
+        if (isMoved) {
             System.out.println("Машина " + name + " проехала " + distance + " км по " + terrain + ". Осталось топлива: " + currentResourceValue + " л.");
         } else {
             System.out.println("Недостаточно топлива для поездки. Осталось: " + currentResourceValue + " л.");
         }
 
-        return moved;
+        return isMoved;
     }
 
     /**

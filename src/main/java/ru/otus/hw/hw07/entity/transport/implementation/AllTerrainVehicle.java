@@ -49,15 +49,15 @@ public class AllTerrainVehicle extends TerrainMovementConsumption implements Tra
      */
     @Override
     public boolean move(double distance, TerrainType terrain) {
-        boolean moved = super.move(distance, terrain);
+        boolean isMoved = super.move(distance, terrain);
 
-        if (moved) {
+        if (isMoved) {
             System.out.println("Вездеход " + name + " проехал " + distance + " км по " + terrain + ". Осталось топлива: " + currentResourceValue + " л.");
         } else {
             System.out.println("Недостаточно топлива для поездки на вездеходе. Осталось: " + currentResourceValue + " л.");
         }
 
-        return moved;
+        return isMoved;
     }
 
     /**

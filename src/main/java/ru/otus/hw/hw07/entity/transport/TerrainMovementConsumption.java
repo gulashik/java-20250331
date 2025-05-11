@@ -19,8 +19,6 @@ import java.util.Map;
  */
 public abstract class TerrainMovementConsumption extends TerrainMovementLimit {
 
-    protected final double initialResourceValue;
-
     protected final double resourceConsumption;
     
     /** Коэффициенты расхода ресурса в зависимости от типа местности */
@@ -44,7 +42,7 @@ public abstract class TerrainMovementConsumption extends TerrainMovementLimit {
     ) {
         super(cantMoveTerrains);
 
-        this.initialResourceValue = initialResourceValue;
+        this.currentResourceValue = initialResourceValue;
         this.resourceConsumption = resourceConsumption;
         this.terrainMultipliers.putAll(terrainMultipliers);
     }
@@ -63,7 +61,7 @@ public abstract class TerrainMovementConsumption extends TerrainMovementLimit {
         double requiredResource =
             distance
             * resourceConsumption
-            // Транспорт может потреблять больше эенергии на сложной местности
+            // Транспорт может потреблять больше энергии на сложной местности
             * terrainMultipliers.getOrDefault(terrain, 1);
 
         if (currentResourceValue < requiredResource) {

@@ -3,19 +3,16 @@ package ru.otus.hw.hw07;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.implementation.*;
 
-// Демонстрация работы
 public class Main {
     public static void main(String[] args) {
-        // Создаем транспортные средства
-        Car car = new Car("Лада Гранта", 50.0, 0.1);  // 10 км на 1 л
+
+        Car car = new Car("Лада Гранта", 50.0, 1.0/10);  // 1 л на 10 км
         Horse horse = new Horse("Буцефал", 100.0, 1.0);  // 1 единица энергии на 1 км
         Bicycle bicycle = new Bicycle("Велосипед Stels");
-        AllTerrainVehicle atv = new AllTerrainVehicle("Вездеход УАЗ", 70.0, 0.2);  // 5 км на 1 л
+        AllTerrainVehicle atv = new AllTerrainVehicle("Вездеход УАЗ", 70.0, 1.0/5);  // 1 л на 5 км
 
-        // Создаем человека
         Person person = new Person("Иван");
 
-        // Тестируем различные сценарии
         System.out.println("\n--- Перемещение пешком ---");
         person.move(5.0, TerrainType.PLAIN);
         person.move(2.0, TerrainType.DENSE_FOREST);
