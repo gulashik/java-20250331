@@ -1,17 +1,17 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
 import ru.otus.hw.hw07.entity.TerrainType;
+import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
 import ru.otus.hw.hw07.entity.transport.Transport;
 
 import java.util.List;
 
 /** Класс Велосипед */
-public class Bicycle implements Transport {
-    private final List<TerrainType> CANT_MOVE_TERRAINS = List.of(TerrainType.SWAMP);
-
+public class Bicycle extends TerrainMovementLimit implements Transport {
     private final String name;
 
     public Bicycle(String name) {
+        super(List.of(TerrainType.SWAMP));
         this.name = name;
     }
 
@@ -31,8 +31,4 @@ public class Bicycle implements Transport {
         return name;
     }
 
-    @Override
-    public boolean cantMoveOn(TerrainType terrain) {
-        return CANT_MOVE_TERRAINS.contains(terrain);
-    }
 }

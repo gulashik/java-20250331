@@ -1,7 +1,10 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
 import ru.otus.hw.hw07.entity.TerrainType;
+import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
 import ru.otus.hw.hw07.entity.transport.Transport;
+
+import java.util.List;
 
 /**
  * Класс представляет транспортное средство типа "Машина".
@@ -9,9 +12,16 @@ import ru.otus.hw.hw07.entity.transport.Transport;
  * в зависимости от пройденного расстояния.
  * Машина не способна передвигаться по густому лесу и болотам.
  *
- * @see ru.otus.hw.hw07.entity.transport.Transport
+ * Реализует интерфейс Transport
+ *
+ * @see Transport
  */
-public class Car implements Transport {
+public class Car extends TerrainMovementLimit implements Transport {
+//    /**
+//     * <code>CANT_MOVE_TERRAINS</code> - список местностей, где не может двигаться сущность
+//     * */
+//    private final List<TerrainType> CANT_MOVE_TERRAINS = List.of(TerrainType.SWAMP, TerrainType.DENSE_FOREST);
+
     private final String name;
     private double fuel;
     private final double fuelConsumption; // расход топлива на 1 км
@@ -24,6 +34,8 @@ public class Car implements Transport {
      * @param fuelConsumption расход топлива в литрах на 1 км пути
      */
     public Car(String name, double initialFuel, double fuelConsumption) {
+        super(List.of(TerrainType.SWAMP, TerrainType.DENSE_FOREST));
+
         this.name = name;
         this.fuel = initialFuel;
         this.fuelConsumption = fuelConsumption;
@@ -51,11 +63,6 @@ public class Car implements Transport {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean cantMoveOn(TerrainType terrain) {
-        return terrain == TerrainType.DENSE_FOREST || terrain == TerrainType.SWAMP;
     }
 
     public void refuel(double amount) {

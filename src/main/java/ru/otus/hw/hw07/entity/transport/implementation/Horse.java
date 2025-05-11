@@ -1,15 +1,21 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
 import ru.otus.hw.hw07.entity.TerrainType;
+import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
 import ru.otus.hw.hw07.entity.transport.Transport;
 
+import java.util.List;
+
 /** Класс Лошадь */
-public class Horse implements Transport {
+public class Horse extends TerrainMovementLimit implements Transport {
+
     private final String name;
-    private double energy;
     private final double energyConsumption; // расход энергии на 1 км
 
+    private double energy;
+
     public Horse(String name, double initialEnergy, double energyConsumption) {
+        super(List.of(TerrainType.SWAMP));
         this.name = name;
         this.energy = initialEnergy;
         this.energyConsumption = energyConsumption;
@@ -37,11 +43,6 @@ public class Horse implements Transport {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public boolean cantMoveOn(TerrainType terrain) {
-        return terrain == TerrainType.SWAMP;
     }
 
     public void rest(double hours) {
