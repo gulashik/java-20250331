@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Builder;
 import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementConsumption;
@@ -35,6 +36,7 @@ public class Horse extends TerrainMovementConsumption implements Transport {
      * @param initialEnergy начальный уровень энергии лошади
      * @param energyConsumption базовый расход энергии на единицу расстояния
      */
+    @Builder
     public Horse(String name, double initialEnergy, double energyConsumption) {
         super(
             initialEnergy,

@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Builder;
 import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementLimit;
@@ -26,6 +27,7 @@ public class Bicycle extends TerrainMovementLimit implements Transport {
      * 
      * @param name название велосипеда
      */
+    @Builder
     public Bicycle(String name) {
         super(List.of(TerrainType.SWAMP));
         this.name = name;

@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Builder;
 import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementConsumption;
@@ -28,6 +29,7 @@ public class Car extends TerrainMovementConsumption implements Transport {
      * @param initialFuel начальное количество топлива в литрах
      * @param fuelConsumption расход топлива в литрах на 1 км пути
      */
+    @Builder
     public Car(String name, double initialFuel, double fuelConsumption) {
         super(
             initialFuel,
@@ -41,7 +43,7 @@ public class Car extends TerrainMovementConsumption implements Transport {
 
     /**
      * Перемещает машину на указанное расстояние по заданной местности.
-     * 
+     *
      * @param distance расстояние в километрах, которое нужно преодолеть
      * @param terrain тип местности, по которой происходит перемещение
      * @return true, если перемещение успешно выполнено (достаточно топлива и местность подходящая),
@@ -67,7 +69,7 @@ public class Car extends TerrainMovementConsumption implements Transport {
 
     /**
      * Заправляет машину указанным количеством топлива.
-     * 
+     *
      * @param amount количество топлива для заправки в литрах
      */
     public void refuel(double amount) {

@@ -1,5 +1,6 @@
 package ru.otus.hw.hw07.entity.transport.implementation;
 
+import lombok.Builder;
 import lombok.Getter;
 import ru.otus.hw.hw07.entity.TerrainType;
 import ru.otus.hw.hw07.entity.transport.TerrainMovementConsumption;
@@ -28,6 +29,7 @@ public class AllTerrainVehicle extends TerrainMovementConsumption implements Tra
      * @param initialFuel начальный запас топлива в литрах
      * @param fuelConsumption базовый расход топлива (литров на км)
      */
+    @Builder
     public AllTerrainVehicle(String name, double initialFuel, double fuelConsumption) {
         super(
             initialFuel,

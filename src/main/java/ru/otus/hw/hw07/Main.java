@@ -6,10 +6,27 @@ import ru.otus.hw.hw07.entity.transport.implementation.*;
 public class Main {
     public static void main(String[] args) {
 
-        Car car = new Car("Лада Гранта", 50.0, 1.0/10);  // 1 л на 10 км
-        Horse horse = new Horse("Буцефал", 100.0, 1.0);  // 1 единица энергии на 1 км
-        Bicycle bicycle = new Bicycle("Велосипед Stels");
-        AllTerrainVehicle atv = new AllTerrainVehicle("Вездеход УАЗ", 70.0, 1.0/5);  // 1 л на 5 км
+        Car car = Car.builder()
+            .name("Лада Гранта")
+            .initialFuel(50.0)
+            .fuelConsumption(1.0/10) // 1 л на 10 км
+            .build();
+
+        Horse horse = Horse.builder()
+            .name("Буцефал")
+            .initialEnergy(100.0)
+            .energyConsumption(1.0) // 1 единица энергии на 1 км
+            .build();
+
+        Bicycle bicycle = Bicycle.builder()
+            .name("Велосипед Stels")
+            .build();
+
+        AllTerrainVehicle atv = AllTerrainVehicle.builder()
+            .name("Вездеход УАЗ")
+            .initialFuel(70)
+            .fuelConsumption(1.0/5) // 1 л на 5 км
+            .build();
 
         Person person = new Person("Иван");
 
