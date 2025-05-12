@@ -68,7 +68,7 @@ public abstract class TerrainMovementConsumption extends TerrainMovementLimit {
             return false;
         }
 
-        currentResourceValue -= requiredResource;
+        currentResourceValue = Math.max(currentResourceValue - requiredResource, 0);
         return true;
     }
 }

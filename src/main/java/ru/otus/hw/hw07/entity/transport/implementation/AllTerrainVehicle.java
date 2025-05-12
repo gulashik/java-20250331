@@ -63,19 +63,6 @@ public class AllTerrainVehicle extends TerrainMovementConsumption implements Tra
     }
 
     /**
-     * Проверяет, может ли вездеход передвигаться по указанному типу местности.
-     * Вездеход способен перемещаться по любой местности.
-     *
-     * @param terrain тип местности для проверки
-     * @return {@code true} всегда, так как вездеход может перемещаться по любой местности
-     */
-    @Override
-    public boolean cantMoveOn(TerrainType terrain) {
-        // Вездеход может перемещаться по любой местности
-        return true;
-    }
-
-    /**
      * Заправляет вездеход указанным количеством топлива.
      *
      * @param amount количество топлива для заправки в литрах
