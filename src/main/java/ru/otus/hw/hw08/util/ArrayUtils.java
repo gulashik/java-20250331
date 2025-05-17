@@ -27,7 +27,7 @@ public abstract class ArrayUtils {
         try {
             int result = validateAndSum(correctArray);
             System.out.println("Sum of array's elements: " + result);
-        } catch (Exception e) {
+        } catch (AppArrayDataException | AppArraySizeException e) {
             System.out.printf(
                 "Have got an exception: %s cause '%s' %n",
                 e.getClass().getSimpleName(),
