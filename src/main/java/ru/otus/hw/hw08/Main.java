@@ -14,6 +14,9 @@ public class Main {
 
         String[][] incorrectArraySize = {
             {"1", "2", "3", "4"},
+            {"5", "6", "7", "8"},
+            {"9"},
+            {"13", "14", "15", "16"}
         };
 
         String[][] incorrectArrayChar = {
