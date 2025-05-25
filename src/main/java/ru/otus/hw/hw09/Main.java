@@ -8,6 +8,12 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Список чисел в диапазоне от 5 до 10: " + createRangeList(5, 10));
 
+        try{
+            System.out.println("Будет Exception: " + createRangeList(2, 1));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
         System.out.println("Сумма элементов больше 5: " + sumElementsGreaterThanFive( createRangeList(3, 7) ));
 
         List<Integer> listToFill = new ArrayList<>(List.of(1, 2, 3, 4, 5));
@@ -38,6 +44,8 @@ public class Main {
     }
 
     private static List<Integer> createRangeList(int min, int max) {
+        if(min > max) throw new IllegalArgumentException("min(%d) не может быть больше чем max(%d)".formatted(min, max));
+
         List<Integer> result = new ArrayList<>();
         
         for (int i = min; i <= max; i++) {
