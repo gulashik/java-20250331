@@ -8,39 +8,48 @@ public class Main {
     public static void main(String[] args) {
         PhoneBook phoneBook = new PhoneBook();
 
-        // Добавляем записи в телефонную книгу
+        /**
+         * дубликаты обрабатываюстся корректно
+         * */
         phoneBook.add("Иванов Иван", "+7-999-123-45-67");
-        phoneBook.add("Иванов Иван", "+7-999-765-43-21"); // Второй телефон для того же человека
+        phoneBook.add("Иванов Иван", "+7-999-123-45-67");
+        phoneBook.add("Иванов Иван", "+7-999-123-45-67");
+        phoneBook.add("Иванов Иван", "+7-999-123-45-67");
+        phoneBook.add("Иванов Иван", "+7-999-765-43-21");
+        phoneBook.add("Иванов Иван", "+7-999-765-43-21");
+        phoneBook.add("Иванов Иван", "+7-999-765-43-21");
+        phoneBook.add("Иванов Иван", "+7-999-765-43-21");
+        phoneBook.add("Иванов Иван", "+7-999-765-43-21");
+
         phoneBook.add("Петров Петр", "+7-888-123-45-67");
-        phoneBook.add("Иванов Сергей", "+7-777-123-45-67"); // Однофамилец
 
-        // Находим телефоны по имени
-        Set<String> ivanovPhones = phoneBook.find("Иванов Иван");
+        phoneBook.add("Иванов Сергей", "+7-777-123-45-67");
+        System.out.println("---------------------\n");
+
         System.out.println("Телефоны Иванова Ивана:");
-        for (String phone : ivanovPhones) {
-            System.out.println(phone);
-        }
+        Set<String> ivanovPhones = phoneBook.find("Иванов Иван");
+        ivanovPhones.forEach(System.out::println);
+        System.out.println("---------------------\n");
 
+        System.out.println("Телефоны Петрова Петра:");
         Set<String> petrovPhones = phoneBook.find("Петров Петр");
-        System.out.println("\nТелефоны Петрова Петра:");
-        for (String phone : petrovPhones) {
-            System.out.println(phone);
-        }
+        petrovPhones.forEach(System.out::println);
+        System.out.println("---------------------\n");
 
-        Set<String> sidorovPhones = phoneBook.find("Сидоров Сидор");
-        System.out.println("\nТелефоны Сидорова Сидора: " +
-            (sidorovPhones.isEmpty() ? "не найдены" : sidorovPhones));
+        System.out.println("Телефоны ХХХ ХХХ:");
+        Set<String> sidorovPhones = phoneBook.find("ХХХ ХХХ");
+        sidorovPhones.forEach(System.out::println);
+        System.out.println("---------------------\n");
 
-        // Проверяем наличие телефона в справочнике
+
         String phoneToCheck = "+7-888-123-45-67";
-        System.out.println("\nТелефон " + phoneToCheck +
-            (phoneBook.containsPhoneNumber(phoneToCheck) ? " найден" : " не найден") +
-            " в справочнике");
+        System.out.println("Телефон " + phoneToCheck +
+            (phoneBook.containsPhoneNumber(phoneToCheck) ? " найден" : " не найден") + " в справочнике\n"
+        );
 
         phoneToCheck = "+7-111-111-11-11";
         System.out.println("Телефон " + phoneToCheck +
-            (phoneBook.containsPhoneNumber(phoneToCheck) ? " найден" : " не найден") +
-            " в справочнике");
+            (phoneBook.containsPhoneNumber(phoneToCheck) ? " найден" : " не найден") + " в справочнике\n"
+        );
     }
-
 }
