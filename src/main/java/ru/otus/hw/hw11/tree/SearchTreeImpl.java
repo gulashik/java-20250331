@@ -30,50 +30,54 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
 
     /**
      * Рекурсивное создание сбалансированного дерева из отсортированного списка.
+     *
      * @param sortedList отсортированный список
-     * @param start начальный индекс
-     * @param end конечный индекс
+     * @param start      начальный индекс
+     * @param end        конечный индекс
      * @return корневой узел
      */
     private TreeNode<T> buildBalancedTree(List<T> sortedList, int start, int end) {
         if (start > end) {
             return null;
         }
-        
+
         // Средний элемент - корень
         int mid = start + (end - start) / 2;
         TreeNode<T> treeNode = new TreeNode<>(sortedList.get(mid));
-        
+
         // Рекурсивно создаём левое и правое поддерево
         treeNode.setLeft(buildBalancedTree(sortedList, start, mid - 1));
         treeNode.setRight(buildBalancedTree(sortedList, mid + 1, end));
-        
+
         return treeNode;
     }
 
     /**
      * Поиск элемента в дереве.
+     *
      * @param element элемент для поиска
      * @return найденный элемент или null, если элемент не найден
      */
     @Override
     public T find(T element) {
-        return findRecursive(root, element);
+        //return findRecursive(root, element);
+        return findIterative(root, element);
     }
 
     /**
      * Рекурсивный метод поиска элемента в дереве.
+     *
      * @param treeNode текущий узел
-     * @param element элемент для поиска
+     * @param element  элемент для поиска
      * @return найденный элемент или null, если элемент не найден
      */
     private T findRecursive(TreeNode<T> treeNode, T element) {
         if (treeNode == null) {
             return null;
         }
-        
+
         int compareResult = element.compareTo(treeNode.getValue());
-        
+
         if (compareResult == 0) {
             return treeNode.getValue(); // Элемент найден
         } else if (compareResult < 0) {
@@ -84,7 +88,34 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
     }
 
     /**
+     * Итеративный метод поиска элемента в дереве.
+     *
+     * @param root корневой узел для начала поиска
+     * @param element элемент для поиска
+     * @return найденный элемент или null, если элемент не найден
+     */
+
+    private T findIterative(TreeNode<T> root, T element) {
+        TreeNode<T> current = root;
+
+        while (current != null) {
+            int compareResult = element.compareTo(current.getValue());
+
+            if (compareResult == 0) {
+                return current.getValue(); // Элемент найден
+            } else if (compareResult < 0) {
+                current = current.getLeft(); // Идем в левое поддерево
+            } else {
+                current = current.getRight(); // Идем в правое поддерево
+            }
+        }
+
+        return null; // Элемент не найден
+    }
+
+    /**
      * Возвращает отсортированный список элементов дерева.
+     *
      * @return отсортированный список
      */
     @Override
@@ -97,8 +128,9 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
     /**
      * Обход дерева в порядке сортировки.
      * Упёрто из интернета, сам бы до такого не додумался. )))
+     *
      * @param treeNode текущий узел
-     * @param result список для сохранения результатов
+     * @param result   список для сохранения результатов
      */
     private void getSortedListRecursive(TreeNode<T> treeNode, List<T> result) {
 
