@@ -1,6 +1,8 @@
 package ru.otus.hw.hw11.tree;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -59,9 +61,10 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
      * @return найденный элемент или null, если элемент не найден
      */
     @Override
-    public T find(T element) {
-        //return findRecursive(root, element);
-        return findIterative(root, element);
+    public T find(T element, boolean useIterativeMethod) {
+        return (useIterativeMethod)?
+            findIterative(root, element):
+            findRecursive(root, element);
     }
 
     /**
@@ -119,16 +122,18 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
      * @return отсортированный список
      */
     @Override
-    public List<T> getSortedList() {
+    public List<T> getSortedList(boolean useIterativeMethod) {
         List<T> result = new ArrayList<>();
-        //getSortedListRecursive(root, result);
-        getSortedListIterative(root, result);
+        if(useIterativeMethod) {
+            getSortedListIterative(root, result);
+        } else {
+            getSortedListRecursive(root, result);
+        }
         return result;
     }
 
     /**
-     * Обход дерева в порядке сортировки.
-     * Упёрто из интернета, сам бы до такого не додумался. )))
+     * Обход дерева рекурсивно в порядке сортировки.
      *
      * @param treeNode текущий узел
      * @param result   список для сохранения результатов
@@ -136,10 +141,10 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
     private void getSortedListRecursive(TreeNode<T> treeNode, List<T> result) {
 
         if (treeNode != null) {
-            // вначале обходим левое(меньшее) поддерево; потом будет скипаться
+            // вначале обходим левое(меньшее) поддерево
             getSortedListRecursive(treeNode.getLeft(), result);
 
-            result.add(treeNode.getValue()); // для сохранения порядка(что потом не сортировать)
+            result.add(treeNode.getValue()); // для сохранения порядка (что потом не сортировать)
 
             // потом обходим правое(большее) поддерево
             getSortedListRecursive(treeNode.getRight(), result);
@@ -151,17 +156,25 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
         }
     }
 
+    /**
+     * Обход дерева итеративно в порядке сортировки.
+     *
+     * @param root корневой узел
+     * @param result   список для сохранения результатов
+     */
     private void getSortedListIterative(TreeNode<T> root, List<T> result) {
+
         if (root == null) {
             return;
         }
 
-        java.util.Deque<TreeNode<T>> stack = new java.util.ArrayDeque<>();
+        Deque<TreeNode<T>> stack = new ArrayDeque<>();
         TreeNode<T> current = root;
 
         // Главный цикл продолжается, пока есть узлы для обработки
         while (true) {
-            // Цикл 1: идем влево до конца, добавляя узлы в стек
+
+            // Идем влево до конца, добавляя узлы в стек
             while (current != null) {
                 stack.push(current);
                 current = current.getLeft();
@@ -172,7 +185,7 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
                 break;
             }
 
-            // Цикл 2: обрабатываем узел и переходим вправо
+            // Обрабатываем узел и переходим вправо
             current = stack.pop();
             result.add(current.getValue());
             current = current.getRight();

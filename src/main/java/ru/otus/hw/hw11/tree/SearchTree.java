@@ -8,7 +8,7 @@ public interface SearchTree<T> {
      * @param element to find
      * @return element if exists, otherwise - null
      */
-    T find(T element);
+    T find(T element, boolean useIterativeMethod);
 
-    List<T> getSortedList();
+    List<T> getSortedList(boolean useIterativeMethod);
 }
