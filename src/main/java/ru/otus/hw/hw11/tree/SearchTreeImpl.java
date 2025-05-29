@@ -121,7 +121,8 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
     @Override
     public List<T> getSortedList() {
         List<T> result = new ArrayList<>();
-        getSortedListRecursive(root, result);
+        //getSortedListRecursive(root, result);
+        getSortedListIterative(root, result);
         return result;
     }
 
@@ -147,6 +148,34 @@ public class SearchTreeImpl<T extends Comparable<T>> implements SearchTree<T> {
             //  3   7
             // / \ / \
             //2  4 6  8
+        }
+    }
+
+    private void getSortedListIterative(TreeNode<T> root, List<T> result) {
+        if (root == null) {
+            return;
+        }
+
+        java.util.Deque<TreeNode<T>> stack = new java.util.ArrayDeque<>();
+        TreeNode<T> current = root;
+
+        // Главный цикл продолжается, пока есть узлы для обработки
+        while (true) {
+            // Цикл 1: идем влево до конца, добавляя узлы в стек
+            while (current != null) {
+                stack.push(current);
+                current = current.getLeft();
+            }
+
+            // Если стек пуст, работа завершена
+            if (stack.isEmpty()) {
+                break;
+            }
+
+            // Цикл 2: обрабатываем узел и переходим вправо
+            current = stack.pop();
+            result.add(current.getValue());
+            current = current.getRight();
         }
     }
 }
