@@ -4,11 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Класс для взаимодействия с пользователем через консоль.
+ */
 public class Interactions {
     private Interactions() {}
 
+    /** Сканер для чтения пользовательского ввода из консоли. */
     private static final Scanner SCANNER = new Scanner(System.in);
 
+    /**
+     * Получает список строк от пользователя для записи в файл.<p>
+     * Пользователь может вводить строки до тех пор, пока не введет "exit".
+     *
+     * @return список строк, введенных пользователем
+     */
     public static List<String> getLinesToWrite() {
         ArrayList<String> lines = new ArrayList<>();
 
@@ -21,7 +31,11 @@ public class Interactions {
     }
 
     /**
-     * Запрашивает у пользователя имя файла для работы
+     * Запрашивает у пользователя имя файла для работы.<p>
+     * Пользователь может ввести номер или имя файла.
+     *
+     * @param textFiles список доступных текстовых файлов
+     * @return имя выбранного файла
      */
     public static String getFileNameFromUser(List<String> textFiles) {
         while (true) {
