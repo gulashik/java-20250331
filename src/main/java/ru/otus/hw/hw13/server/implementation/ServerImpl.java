@@ -55,7 +55,7 @@ public class ServerImpl implements Server {
     }
 
     /**
-     * Запускает сервер калькулятора и начинает прослушивание указанного порта.<p>
+     * {@inheritDoc} <p>
      * Каждое соединение обрабатывается в отдельном потоке с поддержкой математических операций.
      *
      * <p> <strong>Важные моменты реализации:</strong>
@@ -64,10 +64,10 @@ public class ServerImpl implements Server {
      * <li>Каждая ошибка accept() не останавливает сервер, а только логируется</li>
      * </ul>
      *
-     * @see #stop()
      * @see ServerSocket#accept()
      * @see ExecutorService#submit(Runnable)
      */
+    @Override
     public void start() {
         try {
             // Создаем серверный сокет и привязываем к порту
@@ -101,12 +101,13 @@ public class ServerImpl implements Server {
     }
 
     /**
-     * Корректно останавливает сервер калькулятора и освобождает все ресурсы.<p>
+     * {@inheritDoc}
      *
      * @see ExecutorService#shutdown()
      * @see ExecutorService#awaitTermination(long, TimeUnit)
      * @see ExecutorService#shutdownNow()
      */
+    @Override
     public void stop() {
         isRunning = false;
         try {
