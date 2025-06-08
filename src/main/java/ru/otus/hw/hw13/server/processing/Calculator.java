@@ -20,6 +20,33 @@ public final class Calculator {
     }
 
     /**
+     * Обрабатывает математическое выражение от клиента.
+     *
+     * @param input строка с выражением в формате "число операция число"
+     * @return результат вычисления или сообщение об ошибке
+     */
+    public static String processCalculation(String input) {
+        try {
+            String[] parts = input.trim().split("\\s+");
+
+            if (parts.length != 3) {
+                return "Ошибка: неверный формат. Используйте: число операция число";
+            }
+
+            double num1 = Double.parseDouble(parts[0]);
+            String operation = parts[1];
+            double num2 = Double.parseDouble(parts[2]);
+
+            double result = calculate(num1, operation, num2);
+            return "Результат: " + num1 + " " + operation + " " + num2 + " = " + result;
+
+        } catch (NumberFormatException e) {
+            return "Ошибка: неверный формат числа. Проверьте введенные числа.";
+        } catch (Exception e) {
+            return "Ошибка обработки: " + e.getMessage();
+        }
+    }
+    /**
      * Выполняет математическую операцию над двумя числами.
      *
      * @param num1 первое число
@@ -29,7 +56,7 @@ public final class Calculator {
      * @throws IllegalArgumentException если операция не поддерживается
      * @throws ArithmeticException при делении на ноль
      */
-    public static double calculate(double num1, String operation, double num2) {
+    private static double calculate(double num1, String operation, double num2) {
 
         return switch (operation.trim()) {
             case "+" -> num1 + num2;

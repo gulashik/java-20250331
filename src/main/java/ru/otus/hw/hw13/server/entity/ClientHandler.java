@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
- * Класс для обработки клиентских соединений в отдельном потоке.<p>
+ * Класс для обработки клиентских соединений в отдельном потоке.
  *
  * @see Runnable
  * @see Socket
@@ -70,7 +70,7 @@ public class ClientHandler implements Runnable {
                 }
 
                 // Обрабатываем математическое выражение
-                out.println(processCalculation(inputLine));
+                out.println(Calculator.processCalculation(inputLine));
             }
 
         } catch (IOException e) {
@@ -86,34 +86,6 @@ public class ClientHandler implements Runnable {
             } catch (IOException e) {
                 System.err.println("Ошибка при закрытии сокета " + clientAddress + ": " + e.getMessage());
             }
-        }
-    }
-
-    /**
-     * Обрабатывает математическое выражение от клиента.
-     *
-     * @param input строка с выражением в формате "число операция число"
-     * @return результат вычисления или сообщение об ошибке
-     */
-    private String processCalculation(String input) {
-        try {
-            String[] parts = input.trim().split("\\s+");
-
-            if (parts.length != 3) {
-                return "Ошибка: неверный формат. Используйте: число операция число";
-            }
-
-            double num1 = Double.parseDouble(parts[0]);
-            String operation = parts[1];
-            double num2 = Double.parseDouble(parts[2]);
-
-            double result = Calculator.calculate(num1, operation, num2);
-            return "Результат: " + num1 + " " + operation + " " + num2 + " = " + result;
-
-        } catch (NumberFormatException e) {
-            return "Ошибка: неверный формат числа. Проверьте введенные числа.";
-        } catch (Exception e) {
-            return "Ошибка обработки: " + e.getMessage();
         }
     }
 }
