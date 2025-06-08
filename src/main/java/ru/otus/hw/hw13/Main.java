@@ -15,7 +15,7 @@ public class Main {
 
     private static final String CLOSE_TAG = "close";
 
-    private static final Scanner scanner = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException {
 
@@ -25,7 +25,7 @@ public class Main {
         serverThread.start();
 
         // Запускает клиента
-        new Client(HOST_NAME, PORT, CLOSE_TAG).connectAndInteractWithServerAndUser(scanner);
+        new Client(HOST_NAME, PORT, CLOSE_TAG).connectAndInteractWithServerAndUser(SCANNER);
 
         // Останавливаем сервер
         server.stop();
