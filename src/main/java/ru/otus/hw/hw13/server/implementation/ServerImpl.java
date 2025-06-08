@@ -30,6 +30,11 @@ public class ServerImpl implements Server {
 
     /**
      * Флаг состояния сервера для корректного завершения работы.
+     * <pre><strong>Вот тут не уверен</strong>
+     * volatile - чтобы не было кэширования в CPU.
+     * ServerImpl.java - основной поток сервера while (isRunning) {}
+     * Main.java - другой поток вызывает stop()
+     * </pre>
      */
     private volatile boolean isRunning = false;
 
@@ -96,7 +101,6 @@ public class ServerImpl implements Server {
             }
         } catch (IOException e) {
             System.err.println("Не удалось запустить сервер калькулятора: " + e.getMessage());
-            throw new RuntimeException("Ошибка запуска сервера на порту " + port, e);
         }
     }
 
