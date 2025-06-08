@@ -37,6 +37,7 @@ public record Client(String hostname, int port, String closeTag) {
      * @see BufferedReader
      */
     public void connectAndInteractWithServerAndUser(Scanner stdIn) {
+        // Пользовательское приглашение
         final String USER_PROMPT = "--> ";
 
         // try-with-resources
@@ -56,9 +57,8 @@ public record Client(String hostname, int port, String closeTag) {
             System.out.println("Подключен к серверу калькулятора " + hostname + ":" + port);
 
             System.out.println("=== КАЛЬКУЛЯТОР КЛИЕНТ-СЕРВЕР ===");
-            System.out.println("Примеры использования:");
             System.out.println(Calculator.getAvailableOperations());
-            System.out.println("Примеры:");
+            System.out.println("Примеры использования:");
             System.out.println("    10 + 5");
             System.out.println("    20 - 3");
             System.out.println("    4 * 7");
@@ -77,12 +77,13 @@ public record Client(String hostname, int port, String closeTag) {
                 // Читаем ответ от сервера
                 String response = in.readLine();
                 System.out.println(response);
-                System.out.print(USER_PROMPT);
 
-                // Выходим если отправили команду закрытия
+                // Выходим, если отправили команду закрытия
                 if (closeTag.equalsIgnoreCase(userInput.trim())) {
                     break;
                 }
+
+                System.out.print(USER_PROMPT);
             }
         } catch (UnknownHostException e) {
             System.err.println("Неизвестный хост: " + hostname + " " + e.getMessage());
