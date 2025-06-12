@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Сервер калькулятора для обработки математических вычислений.<p>
@@ -36,7 +37,7 @@ public class ServerImpl implements Server {
      * Main.java - другой поток вызывает stop()
      * </pre>
      */
-    private volatile boolean isRunning = false;
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
     /**
      * Создает экземпляр сервера калькулятора с указанным портом и командой закрытия.
@@ -77,13 +78,13 @@ public class ServerImpl implements Server {
         try {
             // Создаем серверный сокет и привязываем к порту
             serverSocket = new ServerSocket(port);
-            isRunning = true;
+            isRunning.set(true);
 
             System.out.println("Сервер калькулятора запущен на порту " + port);
             System.out.println("Ожидание подключений клиентов...");
 
             // Основной цикл сервера - принимаем соединения
-            while (isRunning) {
+            while (isRunning.get()) {
                 try {
                     // accept() блокирует выполнение до поступления соединения
                     Socket clientSocket = serverSocket.accept();
@@ -94,7 +95,7 @@ public class ServerImpl implements Server {
                     executorService.submit(new ClientHandler(clientSocket, closeTag));
 
                 } catch (IOException e) {
-                    if (isRunning) {
+                    if (isRunning.get()) {
                         System.err.println("Ошибка при принятии соединения: " + e.getMessage());
                     }
                 }
@@ -113,7 +114,7 @@ public class ServerImpl implements Server {
      */
     @Override
     public void stop() {
-        isRunning = false;
+        isRunning.set(false);
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();

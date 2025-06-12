@@ -19,15 +19,12 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        // Запускаем сервер в отдельном потоке
         Server server = new ServerImpl(PORT, CLOSE_TAG);
         Thread serverThread = new Thread(server::start);
         serverThread.start();
 
-        // Запускает клиента
         new Client(HOST_NAME, PORT, CLOSE_TAG).connectAndInteractWithServerAndUser(SCANNER);
 
-        // Останавливаем сервер
         server.stop();
     }
 }
