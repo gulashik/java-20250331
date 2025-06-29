@@ -7,17 +7,52 @@ import java.net.*;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Реализация клиента чата для подключения к серверу и обмена сообщениями.
+ * 
+ * <p>Класс использует многопоточность для одновременной обработки входящих сообщений
+ * от сервера и пользовательского ввода.
+ * 
+ * <p>Пример использования:
+ * <pre>{@code
+ * ChatImpl chatClient = new ChatImpl();
+ * chatClient.start(); // Запуск клиента и подключение к серверу
+ * }</pre>
+ */
 @Slf4j
 public class ChatImpl {
+    
+    /** Хост сервера для подключения */
     private static final String SERVER_HOST = "localhost";
+    
+    /** Порт сервера для подключения */
     private static final int SERVER_PORT = 8080;
 
+    /** TCP сокет для соединения с сервером */
     private Socket socket;
+    
+    /** Поток для чтения данных от сервера */
     private BufferedReader reader;
+    
+    /** Поток для отправки данных на сервер */
     private PrintWriter writer;
+    
+    /** Сканер для чтения пользовательского ввода */
     private Scanner scanner;
+    
+    /** 
+     * Потокобезопастный флаг состояния клиента.
+     */
     private final AtomicBoolean running = new AtomicBoolean(false);
 
+    /**
+     * Запускает клиент чата и устанавливает соединение с сервером.
+     *
+     * <p>Используется многопоточность для одновременной обработки входящих сообщений
+     * от сервера и пользовательского ввода.
+     * 
+     * @throws RuntimeException если произошла критическая ошибка при работе
+     */
     public void start() {
         scanner = new Scanner(System.in);
 
@@ -31,45 +66,45 @@ public class ChatImpl {
             log.info("Подключение к серверу {}:{}", SERVER_HOST, SERVER_PORT);
             log.info("Подключение к серверу " + SERVER_HOST + ":" + SERVER_PORT);
 
-            // Поток для чтения сообщений от сервера
+            // Новый поток для чтения сообщений от сервера
             Thread messageListener = new Thread(this::listenForMessages);
-            messageListener.setDaemon(true);
+            messageListener.setDaemon(true); // Поток автоматически завершится вместе с Клиентом
             messageListener.start();
 
-            // Основной поток для отправки сообщений
+            // Текущий поток для отправки сообщений
             handleUserInput();
 
         } catch (IOException e) {
             log.error("Ошибка подключения к серверу", e);
-            System.err.println("Не удалось подключиться к серверу: " + e.getMessage());
+            log.info("Не удалось подключиться к серверу: " + e.getMessage());
         } finally {
             disconnect();
         }
     }
 
+    /**
+     * Прослушивает входящие сообщения от сервера.
+     */
     private void listenForMessages() {
         try {
             String message;
             while (running.get() && (message = reader.readLine()) != null) {
-                System.out.println(message);
+                log.info(message);
             }
         } catch (IOException e) {
             if (running.get()) {
                 log.error("Ошибка при чтении сообщений от сервера", e);
-                System.err.println("Соединение с сервером потеряно");
+                log.info("Соединение с сервером потеряно");
             }
         }
     }
 
+    /**
+     * Обрабатывает пользовательский ввод и отправляет команды/сообщения на сервер.
+     */
     private void handleUserInput() {
        log.info("Добро пожаловать в чат!");
-       log.info("Доступные команды:");
-       log.info("/w <никнейм> <сообщение> - отправить личное сообщение");
-       log.info("/all - показать список всех пользователей");
-       log.info("/name <новый_никнейм> - сменить свой никнейм");
-       log.info("/exit - выйти из чата");
-       log.info("Или просто введите сообщение для отправки всем");
-       log.info("");
+       showHelp();
 
         while (running.get()) {
             try {
@@ -87,13 +122,17 @@ public class ChatImpl {
 
                 // Проверка команд
                 if (input.startsWith("/w ")) {
-                    handleWhisperCommand(input);
+                    handlePrivateMessageSendCommand(input);
+
                 } else if (input.equals("/all")) {
                     writer.println("/all");
+
                 } else if (input.startsWith("/name ")) {
                     handleNameCommand(input);
+
                 } else if (input.startsWith("/help")) {
                     showHelp();
+
                 } else {
                     // Обычное сообщение
                     writer.println(input);
@@ -108,7 +147,12 @@ public class ChatImpl {
         }
     }
 
-    private void handleWhisperCommand(String input) {
+    /**
+     * Обрабатывает команду отправки личного сообщения.
+     * 
+     * @param input строка команды, введенная пользователем
+     */
+    private void handlePrivateMessageSendCommand(String input) {
         String[] parts = input.split(" ", 3);
         if (parts.length < 3) {
             log.info("Использование: /w <никнейм> <сообщение>");
@@ -133,6 +177,11 @@ public class ChatImpl {
         log.info("Отправлено личное сообщение пользователю {}: {}", recipient, message);
     }
 
+    /**
+     * Обрабатывает команду смены никнейма.
+     *
+     * @param input строка команды, введенная пользователем
+     */
     private void handleNameCommand(String input) {
         String[] parts = input.split(" ", 2);
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
@@ -145,6 +194,9 @@ public class ChatImpl {
         log.info("Запрос на смену никнейма на: {}", parts[1]);
     }
 
+    /**
+     * Выводит подробную справку по всем доступным командам чата.
+     */
     private void showHelp() {
         log.info("\n=== Справка по командам ===");
         log.info("/w <никнейм> <сообщение> - отправить личное сообщение пользователю");
@@ -158,6 +210,9 @@ public class ChatImpl {
         log.info("=========================\n");
     }
 
+    /**
+     * Отключается от сервера и освобождает все ресурсы.
+     */
     private void disconnect() {
         running.set(false);
         try {
@@ -177,7 +232,7 @@ public class ChatImpl {
             log.error("Ошибка при отключении", e);
         }
 
-        log.info("Отключение от сервера...");
-        log.info("Клиент отключен");
+        log.warn("Отключение от сервера...");
+        log.info("Клиент отключен от {}", socket.getRemoteSocketAddress());
     }
 }
