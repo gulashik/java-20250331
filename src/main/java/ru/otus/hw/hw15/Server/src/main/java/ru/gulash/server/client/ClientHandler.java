@@ -1,8 +1,6 @@
 package ru.gulash.server.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.gulash.server.server.ServerImpl;
 
 import java.io.BufferedReader;
@@ -10,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Обработчик клиентских подключений чат-сервера.
@@ -43,6 +42,12 @@ public class ClientHandler implements Runnable {
     private final ServerImpl server;
 
     /**
+     * Флаг состояния соединения с клиентом.
+     */
+
+    private boolean isConnected;
+
+    /**
      * Создает новый обработчик клиента.
      * 
      * @param socket TCP-сокет установленного соединения с клиентом.
@@ -60,6 +65,7 @@ public class ClientHandler implements Runnable {
         }
         this.socket = socket;
         this.server = server;
+        this.isConnected = true;
     }
 
     /**
@@ -72,8 +78,8 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             // Инициализация потоков ввода/вывода
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new PrintWriter(socket.getOutputStream(), true);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            writer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
 
             // Процедура регистрации клиента
             writer.println("Введите ваш никнейм:");
@@ -99,10 +105,11 @@ public class ClientHandler implements Runnable {
             writer.println("/all - список пользователей");
             writer.println("/name <новый_никнейм> - сменить никнейм");
             writer.println("/exit - выйти из чата");
+            writer.println("/help - показать справку");
 
             // Основной цикл обработки сообщений
             String message;
-            while ((message = reader.readLine()) != null) {
+            while (isConnected && (message = reader.readLine()) != null) {
                 if (message.equals("/exit")) {
                     break;
                 } else if (message.equals("/all")) {
@@ -160,7 +167,7 @@ public class ClientHandler implements Runnable {
         }
 
         String recipient = parts[1];
-        String message = parts[2];
+        String message = parts[2].trim();
         server.sendPrivateMessage(nickname, recipient, message);
     }
 
@@ -171,7 +178,7 @@ public class ClientHandler implements Runnable {
      *                Если {@code null}, сообщение не отправляется.
      */
     public void sendMessage(String message) {
-        if (writer != null && message != null) {
+        if (isConnected && writer != null && message != null) {
             writer.println(message);
         }
     }
@@ -180,6 +187,8 @@ public class ClientHandler implements Runnable {
      * Выполняет отключение клиента и освобождение ресурсов.
      */
     private void disconnect() {
+        isConnected = false;
+
         try {
             if (nickname != null) {
                 server.removeClient(nickname);

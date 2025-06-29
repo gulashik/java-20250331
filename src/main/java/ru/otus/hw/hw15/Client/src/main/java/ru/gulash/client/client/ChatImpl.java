@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -54,17 +55,16 @@ public class ChatImpl {
      * @throws RuntimeException если произошла критическая ошибка при работе
      */
     public void start() {
-        scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in, StandardCharsets.UTF_8);
 
         try {
             // Подключение к серверу
             socket = new Socket(SERVER_HOST, SERVER_PORT);
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            writer = new PrintWriter(socket.getOutputStream(), true);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            writer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
             running.set(true);
 
             log.info("Подключение к серверу {}:{}", SERVER_HOST, SERVER_PORT);
-            log.info("Подключение к серверу " + SERVER_HOST + ":" + SERVER_PORT);
 
             // Новый поток для чтения сообщений от сервера
             Thread messageListener = new Thread(this::listenForMessages);
@@ -104,7 +104,6 @@ public class ChatImpl {
      */
     private void handleUserInput() {
        log.info("Добро пожаловать в чат!");
-       showHelp();
 
         while (running.get()) {
             try {
