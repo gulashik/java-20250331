@@ -1,5 +1,7 @@
 ### Maven ###
 **/target/**
+**/dependency-reduced-pom.xml
+**/*.log
 
 ### IntelliJ IDEA ###
 .idea/
