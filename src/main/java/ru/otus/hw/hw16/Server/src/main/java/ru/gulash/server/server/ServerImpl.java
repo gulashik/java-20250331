@@ -27,8 +27,6 @@ public class ServerImpl {
     
     /**
      * Потокобезопасная Map активных клиентов.
-     * 
-     * <p>Ключ - никнейм клиента (String), значение - обработчик клиента (ClientHandler).</p>
      */
     private static final Map<User, ClientHandler> clients = new ConcurrentHashMap<>();
     
@@ -92,13 +90,10 @@ public class ServerImpl {
 
     /**
      * Добавляет нового клиента в список активных пользователей.
-     * 
-     * <p>Метод синхронизирован для обеспечения потокобезопасности при
-     * одновременном добавлении клиентов из разных потоков.</p>
-     * 
-     * @param user уникальный никнейм клиента не может быть null
-     * @param handler  обработчик клиентского соединения не может быть null
-     * @throws IllegalArgumentException если nickname или handler равны null
+     * <p>Метод синхронизирован для обеспечения потокобезопасности.</p>
+     *
+     * @param user    объект пользователя, представляющий подключающегося клиента.
+     * @param handler объект обработчика клиентского подключения, связанный с данным.
      */
     public synchronized void addClient(User user, ClientHandler handler) {
         clients.put(user, handler);
@@ -107,13 +102,10 @@ public class ServerImpl {
     }
 
     /**
-     * Удаляет клиента из списка активных пользователей.
+     * Удаляет клиента из списка подключенных пользователей.
+     * <p>Метод синхронизирован для обеспечения потокобезопасности.</p>
      *
-     * <p>Метод синхронизирован для обеспечения потокобезопасности при
-     * одновременном удалении клиентов из разных потоков.</p>
-     * 
-     * @param user никнейм клиента для удаления, может быть null
-     *                (в этом случае операция игнорируется)
+     * @param user объект пользователя, представляющий отключающегося клиента.
      */
     public synchronized void removeClient(User user) {
         clients.remove(user);
@@ -177,6 +169,12 @@ public class ServerImpl {
             String.join(", ", clients.keySet().stream().map(User::username).toList());
     }
 
+    /**
+     * Ищет обработчик клиента по логину пользователя.
+     *
+     * @param login логин пользователя для поиска
+     * @return обработчик клиента, если пользователь найден, или null если пользователь не найден
+     */
     private ClientHandler findUser(String login) {
         return clients.entrySet().stream()
             .filter(entry -> entry.getKey().username().equals(login))
