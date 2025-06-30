@@ -1,6 +1,8 @@
 package ru.gulash.server.client;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.gulash.server.auth.AuthenticationProvider;
+import ru.gulash.server.model.User;
 import ru.gulash.server.server.ServerImpl;
 
 import java.io.BufferedReader;
@@ -30,16 +32,15 @@ public class ClientHandler implements Runnable {
      * Поток для отправки данных клиенту.
      */
     private PrintWriter writer;
-    
-    /**
-     * Текущий никнейм клиента в чате.
-     */
-    private String nickname;
+
+    private User user;
     
     /**
      * Ссылка на основной сервер для взаимодействия с другими клиентами.
      */
     private final ServerImpl server;
+
+    private final AuthenticationProvider authenticationProvider;
 
     /**
      * Флаг состояния соединения с клиентом.
@@ -56,15 +57,19 @@ public class ClientHandler implements Runnable {
      *               Не должен быть {@code null}.
      * @throws IllegalArgumentException если socket или server равны {@code null}
      */
-    public ClientHandler(Socket socket, ServerImpl server) {
+    public ClientHandler(Socket socket, ServerImpl server, AuthenticationProvider authenticationProvider) {
         if (socket == null) {
             throw new IllegalArgumentException("Socket не может быть null");
         }
         if (server == null) {
             throw new IllegalArgumentException("Server не может быть null");
         }
+        if (authenticationProvider == null) {
+            throw new IllegalArgumentException("AuthenticationProvider не может быть null");
+        }
         this.socket = socket;
         this.server = server;
+        this.authenticationProvider = authenticationProvider;
         this.isConnected = true;
     }
 
@@ -82,24 +87,20 @@ public class ClientHandler implements Runnable {
             writer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
 
             // Процедура регистрации клиента
-            writer.println("Введите ваш никнейм:");
-            nickname = reader.readLine();
+            writer.println("Введите логин и пароль:");
+            String[] credential = reader.readLine().split(" ", 2);
 
-            // Валидация и обеспечение уникальности никнейма
-            while (nickname == null || nickname.trim().isEmpty() || server.isNicknameTaken(nickname)) {
-                if (server.isNicknameTaken(nickname)) {
-                    writer.println("Никнейм уже занят. Введите другой:");
-                } else {
-                    writer.println("Никнейм не может быть пустым. Введите никнейм:");
-                }
-                nickname = reader.readLine();
+            user = authenticationProvider.authenticate(credential[0], credential[1]);
+
+            if (user == null) {
+                throw new RuntimeException("Ошибка аутентификации.");
             }
 
             // Регистрация клиента на сервере
-            server.addClient(nickname, this);
+            server.addClient(user, this);
             
             // Отправка приветственного сообщения и справки по командам
-            writer.println("Добро пожаловать в чат, " + nickname + "!");
+            writer.println("Добро пожаловать в чат, " + user.username() + "!");
             writer.println("Доступные команды:");
             writer.println("/w <никнейм> <сообщение> - личное сообщение");
             writer.println("/all - список пользователей");
@@ -114,44 +115,18 @@ public class ClientHandler implements Runnable {
                     break;
                 } else if (message.equals("/all")) {
                     writer.println(server.getClientsList());
-                } else if (message.startsWith("/name ")) {
-                    handleNameChange(message);
                 } else if (message.startsWith("/w ")) {
                     handlePrivateMessage(message);
                 } else {
                     // Обычное сообщение для всех пользователей
-                    server.broadcastMessage(nickname, message);
+                    server.broadcastMessage(user.username(), message);
                 }
             }
         } catch (IOException e) {
-            log.error("Ошибка в обработчике клиента {}", nickname, e);
+            log.error("Ошибка в обработчике клиента {}", user.username(), e);
         } finally {
             disconnect();
         }
-    }
-
-    /**
-     * Обрабатывает команду смены никнейма клиента.
-     * 
-     * @param command строка команды
-     */
-    private void handleNameChange(String command) {
-        String[] parts = command.split(" ", 2);
-        if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            writer.println("Использование: /name <новый_никнейм>");
-            return;
-        }
-
-        String newNickname = parts[1].trim();
-        if (server.isNicknameTaken(newNickname)) {
-            writer.println("Никнейм " + newNickname + " уже занят");
-            return;
-        }
-
-        String oldNickname = nickname;
-        nickname = newNickname;
-        server.changeNickname(oldNickname, newNickname);
-        writer.println("Ваш никнейм изменен на " + newNickname);
     }
 
     /**
@@ -168,7 +143,7 @@ public class ClientHandler implements Runnable {
 
         String recipient = parts[1];
         String message = parts[2].trim();
-        server.sendPrivateMessage(nickname, recipient, message);
+        server.sendPrivateMessage(user.username(), recipient, message);
     }
 
     /**
@@ -190,8 +165,8 @@ public class ClientHandler implements Runnable {
         isConnected = false;
 
         try {
-            if (nickname != null) {
-                server.removeClient(nickname);
+            if (user != null) {
+                server.removeClient(user);
             }
             if (writer != null) {
                 writer.close();
@@ -203,7 +178,7 @@ public class ClientHandler implements Runnable {
                 socket.close();
             }
         } catch (IOException e) {
-            log.error("Ошибка при отключении клиента {}", nickname, e);
+            log.error("Ошибка при отключении клиента {}", user, e);
         }
     }
 }

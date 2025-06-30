@@ -1,7 +1,11 @@
 package ru.gulash.server.server;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import ru.gulash.server.auth.AuthenticationProvider;
+import ru.gulash.server.auth.InMemoryAuthenticationProvider;
 import ru.gulash.server.client.ClientHandler;
+import ru.gulash.server.model.User;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -26,13 +30,15 @@ public class ServerImpl {
      * 
      * <p>Ключ - никнейм клиента (String), значение - обработчик клиента (ClientHandler).</p>
      */
-    private static final Map<String, ClientHandler> clients = new ConcurrentHashMap<>();
+    private static final Map<User, ClientHandler> clients = new ConcurrentHashMap<>();
     
     /**
      * Серверный сокет для принятия входящих подключений.
      */
     private ServerSocket serverSocket;
-    
+
+    private final AuthenticationProvider authenticationProvider = new InMemoryAuthenticationProvider();
+
     /**
      * Атомарный флаг состояния сервера.
      * <p>true - сервер работает, false - сервер остановлен.</p>
@@ -55,7 +61,7 @@ public class ServerImpl {
                     Socket clientSocket = serverSocket.accept();
                     log.info("Новое подключение: {}", clientSocket.getInetAddress());
 
-                    ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                    ClientHandler clientHandler = new ClientHandler(clientSocket, this, authenticationProvider);
                     new Thread(clientHandler).start();
                 } catch (IOException e) {
                     if (running.get()) {
@@ -65,12 +71,13 @@ public class ServerImpl {
             }
         } catch (IOException e) {
             log.error("Ошибка запуска сервера", e);
+        } finally {
+            stop();
         }
     }
 
     /**
      * Останавливает сервер и освобождает все ресурсы.
-     * <p style="color: red">Пока не используется.</p>
      */
     public void stop() {
         running.set(false);
@@ -89,14 +96,14 @@ public class ServerImpl {
      * <p>Метод синхронизирован для обеспечения потокобезопасности при
      * одновременном добавлении клиентов из разных потоков.</p>
      * 
-     * @param nickname уникальный никнейм клиента не может быть null
+     * @param user уникальный никнейм клиента не может быть null
      * @param handler  обработчик клиентского соединения не может быть null
      * @throws IllegalArgumentException если nickname или handler равны null
      */
-    public synchronized void addClient(String nickname, ClientHandler handler) {
-        clients.put(nickname, handler);
-        log.info("Клиент {} подключился. Всего клиентов: {}", nickname, clients.size());
-        broadcastMessage("SERVER", nickname + " присоединился к чату");
+    public synchronized void addClient(User user, ClientHandler handler) {
+        clients.put(user, handler);
+        log.info("Клиент {} подключился. Всего клиентов: {}", user.username(), clients.size());
+        broadcastMessage("SERVER", user.username() + " присоединился к чату");
     }
 
     /**
@@ -105,46 +112,13 @@ public class ServerImpl {
      * <p>Метод синхронизирован для обеспечения потокобезопасности при
      * одновременном удалении клиентов из разных потоков.</p>
      * 
-     * @param nickname никнейм клиента для удаления, может быть null
+     * @param user никнейм клиента для удаления, может быть null
      *                (в этом случае операция игнорируется)
      */
-    public synchronized void removeClient(String nickname) {
-        clients.remove(nickname);
-        log.info("Клиент {} отключился. Всего клиентов: {}", nickname, clients.size());
-        broadcastMessage("SERVER", nickname + " покинул чат");
-    }
-
-    /**
-     * Проверяет, занят ли указанный никнейм.
-     *
-     * <p>Метод синхронизирован для обеспечения атомарности операции
-     * смены никнейма.</p>
-     *
-     * @param nickname никнейм для проверки, не должен быть null
-     * @return true, если никнейм уже используется; false в противном случае
-     * @throws IllegalArgumentException если nickname равен null
-     */
-    public synchronized boolean isNicknameTaken(String nickname) {
-        return clients.containsKey(nickname);
-    }
-
-    /**
-     * Изменяет никнейм существующего клиента.
-     * 
-     * <p>Метод синхронизирован для обеспечения атомарности операции
-     * смены никнейма.</p>
-     * 
-     * @param oldNickname текущий никнейм клиента, не должен быть null
-     * @param newNickname новый никнейм клиента, не должен быть null или пустым
-     * @throws IllegalArgumentException если любой из параметров равен null
-     */
-    public synchronized void changeNickname(String oldNickname, String newNickname) {
-        ClientHandler handler = clients.remove(oldNickname);
-        if (handler != null) {
-            clients.put(newNickname, handler);
-            log.info("Клиент {} сменил имя на {}", oldNickname, newNickname);
-            broadcastMessage("SERVER", oldNickname + " сменил имя на " + newNickname);
-        }
+    public synchronized void removeClient(User user) {
+        clients.remove(user);
+        log.info("Клиент {} отключился. Всего клиентов: {}", user.username(), clients.size());
+        broadcastMessage("SERVER", user.username() + " покинул чат");
     }
 
     /**
@@ -170,8 +144,8 @@ public class ServerImpl {
      * @throws IllegalArgumentException если любой из параметров равен null
      */
     public void sendPrivateMessage(String sender, String recipient, String message) {
-        ClientHandler recipientHandler = clients.get(recipient);
-        ClientHandler senderHandler = clients.get(sender);
+        ClientHandler recipientHandler = findUser(recipient);
+        ClientHandler senderHandler = findUser(sender);
 
         if (recipientHandler != null) {
             String privateMessage = "[Личное от " + sender + "]: " + message;
@@ -199,6 +173,15 @@ public class ServerImpl {
         if (clients.isEmpty()) {
             return "Нет подключенных пользователей";
         }
-        return "Подключенные пользователи: " + String.join(", ", clients.keySet());
+        return "Подключенные пользователи: " +
+            String.join(", ", clients.keySet().stream().map(User::username).toList());
+    }
+
+    private ClientHandler findUser(String login) {
+        return clients.entrySet().stream()
+            .filter(entry -> entry.getKey().username().equals(login))
+            .findFirst()
+            .map(Map.Entry::getValue)
+            .orElse(null);
     }
 }
