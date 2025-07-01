@@ -49,6 +49,8 @@ public class CommandExecutor {
             writer.println(server.getClientsList());
         } else if (message.startsWith("/w ")) {
             clientHandler.handlePrivateMessage(message);
+        } else if (message.startsWith("/kick ")) {
+            clientHandler.handleKickMessage(message);
         } else {
             // Обычное сообщение для всех пользователей
             server.broadcastMessage(user.username(), message);

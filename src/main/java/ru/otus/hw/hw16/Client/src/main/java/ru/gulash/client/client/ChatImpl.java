@@ -90,12 +90,19 @@ public class ChatImpl {
             String message;
             while (running.get() && (message = reader.readLine()) != null) {
                 log.info(message);
+                handleServerInput(message.trim());
             }
         } catch (IOException e) {
             if (running.get()) {
                 log.error("Ошибка при чтении сообщений от сервера", e);
                 log.info("Соединение с сервером потеряно");
             }
+        }
+    }
+
+    private void handleServerInput(String message) {
+        if (message.startsWith("/kick")) {
+            disconnect();
         }
     }
 
@@ -184,6 +191,8 @@ public class ChatImpl {
         log.info("/exit - выйти из чата");
         log.info("/help - показать эту справку");
         log.info("Чтобы отправить сообщение всем, просто введите текст без команд");
+        log.info("Доступные административные команды:");
+        log.info("/kick <никнейм> - выкинуть пользователя из чата.");
         log.info("=========================\n");
     }
 

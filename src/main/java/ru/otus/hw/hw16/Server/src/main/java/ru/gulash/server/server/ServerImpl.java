@@ -139,12 +139,30 @@ public class ServerImpl {
      * @throws IllegalArgumentException если любой из параметров равен null
      */
     public void sendPrivateMessage(String sender, String recipient, String message) {
-        ClientHandler recipientHandler = findUser(recipient);
-        ClientHandler senderHandler = findUser(sender);
+        ClientHandler recipientHandler = findClientHandler(recipient);
+        ClientHandler senderHandler = findClientHandler(sender);
 
         if (recipientHandler != null) {
             String privateMessage = "[Личное от " + sender + "]: " + message;
             recipientHandler.sendMessage(privateMessage);
+
+            if (senderHandler != null) {
+                senderHandler.sendMessage("[Вы -> " + recipient + "]: " + message);
+            }
+
+            log.info("Личное сообщение от {} к {}: {}", sender, recipient, message);
+        } else {
+            if (senderHandler != null) {
+                senderHandler.sendMessage("Пользователь " + recipient + " не найден");
+            }
+        }
+    }
+    public void sendServiceMessage(String sender, String recipient, String message) {
+        ClientHandler recipientHandler = findClientHandler(recipient);
+        ClientHandler senderHandler = findClientHandler(sender);
+
+        if (recipientHandler != null) {
+            recipientHandler.sendMessage(message);
 
             if (senderHandler != null) {
                 senderHandler.sendMessage("[Вы -> " + recipient + "]: " + message);
@@ -178,11 +196,15 @@ public class ServerImpl {
      * @param login логин пользователя для поиска
      * @return обработчик клиента, если пользователь найден, или null, если пользователь не найден
      */
-    private ClientHandler findUser(String login) {
+    private ClientHandler findClientHandler(String login) {
         return clients.entrySet().stream()
             .filter(entry -> entry.getKey().username().equals(login))
             .findFirst()
             .map(Map.Entry::getValue)
             .orElse(null);
+    }
+
+    public User findUserByLogin(String login) {
+        return findClientHandler(login).getUser();
     }
 }

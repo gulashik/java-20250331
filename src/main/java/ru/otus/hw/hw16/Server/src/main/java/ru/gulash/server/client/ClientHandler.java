@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.gulash.server.auth.AuthenticationProvider;
 import ru.gulash.server.exception.ExitClientException;
+import ru.gulash.server.model.Role;
 import ru.gulash.server.model.User;
 import ru.gulash.server.server.ServerImpl;
 
@@ -112,10 +113,6 @@ public class ClientHandler implements Runnable {
 
             // Отправка приветственного сообщения и справки по командам
             writer.println("Добро пожаловать в чат, " + user.username() + "!");
-            writer.println("Доступные команды:");
-            writer.println("/w <никнейм> <сообщение> - личное сообщение");
-            writer.println("/all - список пользователей");
-            writer.println("/exit - выйти из чата");
             writer.println("/help - показать справку");
 
             // Основной цикл обработки сообщений
@@ -160,6 +157,23 @@ public class ClientHandler implements Runnable {
         String recipient = parts[1];
         String message = parts[2].trim();
         server.sendPrivateMessage(user.username(), recipient, message);
+    }
+
+    public void handleKickMessage(String command) {
+        String[] parts = command.split(" ", 2);
+        if (parts.length < 2) {
+            writer.println("Использование: /kick <никнейм>");
+            return;
+        }
+
+        // Проверить что пользователя ADMIN
+        if(!Role.hasAccess(user.role(), Role.ADMIN)) {
+            writer.println("Нехватает прав для выполнения: /kick <никнейм>");
+            return;
+        }
+
+        String recipient = parts[1];
+        server.sendServiceMessage(user.username(), recipient, "/kick");
     }
 
     /**
