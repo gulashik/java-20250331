@@ -76,7 +76,7 @@ public class ChatImpl {
 
         } catch (IOException e) {
             log.error("Ошибка подключения к серверу", e);
-            log.info("Не удалось подключиться к серверу: " + e.getMessage());
+            log.info("Не удалось подключиться к серверу: {}", e.getMessage());
         } finally {
             disconnect();
         }
@@ -126,9 +126,6 @@ public class ChatImpl {
                 } else if (input.equals("/all")) {
                     writer.println("/all");
 
-                } else if (input.startsWith("/name ")) {
-                    handleNameCommand(input);
-
                 } else if (input.startsWith("/help")) {
                     showHelp();
 
@@ -177,23 +174,6 @@ public class ChatImpl {
     }
 
     /**
-     * Обрабатывает команду смены никнейма.
-     *
-     * @param input строка команды, введенная пользователем
-     */
-    private void handleNameCommand(String input) {
-        String[] parts = input.split(" ", 2);
-        if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            log.info("Использование: /name <новый_никнейм>");
-            log.info("Пример: /name alice");
-            return;
-        }
-
-        writer.println(input);
-        log.info("Запрос на смену никнейма на: {}", parts[1]);
-    }
-
-    /**
      * Выводит подробную справку по всем доступным командам чата.
      */
     private void showHelp() {
@@ -201,8 +181,6 @@ public class ChatImpl {
         log.info("/w <никнейм> <сообщение> - отправить личное сообщение пользователю");
         log.info("    Пример: /w tom Привет!");
         log.info("/all - показать список всех подключенных пользователей");
-        log.info("/name <новый_никнейм> - сменить свой никнейм");
-        log.info("    Пример: /name alice");
         log.info("/exit - выйти из чата");
         log.info("/help - показать эту справку");
         log.info("Чтобы отправить сообщение всем, просто введите текст без команд");

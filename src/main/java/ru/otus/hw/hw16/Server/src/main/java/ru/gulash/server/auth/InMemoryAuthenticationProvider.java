@@ -13,7 +13,9 @@ public class InMemoryAuthenticationProvider implements AuthenticationProvider {
         // Добавляем администратора по умолчанию
         addUser(new User("admin", "admin123", Role.ADMIN));
         // Добавляем тестового пользователя
-        addUser(new User("test", "test123", Role.USER));
+        addUser(new User("user1", "user123", Role.USER));
+        addUser(new User("user2", "user123", Role.USER));
+        addUser(new User("user3", "user123", Role.USER));
     }
 
     @Override

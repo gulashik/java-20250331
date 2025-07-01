@@ -1,7 +1,9 @@
 package ru.gulash.server.client;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import ru.gulash.server.auth.AuthenticationProvider;
+import ru.gulash.server.exception.ExitClientException;
 import ru.gulash.server.model.User;
 import ru.gulash.server.server.ServerImpl;
 
@@ -26,21 +28,26 @@ public class ClientHandler implements Runnable {
     /**
      * Буферизированный поток для чтения входящих данных от клиента.
      */
+    @Getter
     private BufferedReader reader;
     
     /**
      * Поток для отправки данных клиенту.
      */
+    @Getter
     private PrintWriter writer;
 
+    @Getter
     private User user;
-    
+
     /**
      * Ссылка на основной сервер для взаимодействия с другими клиентами.
      */
+    @Getter
     private final ServerImpl server;
 
     private final AuthenticationProvider authenticationProvider;
+
 
     /**
      * Флаг состояния соединения с клиентом.
@@ -49,13 +56,13 @@ public class ClientHandler implements Runnable {
     private boolean isConnected;
 
     /**
-     * Создает новый обработчик клиента.
-     * 
-     * @param socket TCP-сокет установленного соединения с клиентом.
-     *               Не должен быть {@code null}.
-     * @param server экземпляр сервера для взаимодействия с другими клиентами.
-     *               Не должен быть {@code null}.
-     * @throws IllegalArgumentException если socket или server равны {@code null}
+     * Создает новый экземпляр ClientHandler, отвечающий за управление
+     * связью между сервером и подключенным клиентом.
+     *
+     * @param socket сокет, связанный с подключением клиента. Не может быть null.
+     * @param server реализация сервера, управляющая состоянием приложения. Не может быть null.
+     * @param authenticationProvider провайдер аутентификации для проверки учетных данных клиента. Не может быть null.
+     * @throws IllegalArgumentException если любой из параметров равен null.
      */
     public ClientHandler(Socket socket, ServerImpl server, AuthenticationProvider authenticationProvider) {
         if (socket == null) {
@@ -87,45 +94,54 @@ public class ClientHandler implements Runnable {
             writer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
 
             // Процедура регистрации клиента
-            writer.println("Введите логин и пароль:");
+            writer.println("Введите логин и пароль в формате 'login пробел password':");
             String[] credential = reader.readLine().split(" ", 2);
 
             user = authenticationProvider.authenticate(credential[0], credential[1]);
 
             if (user == null) {
+                writer.println("Ошибка аутентификации. Клиентская сессия закрыта.");
                 throw new RuntimeException("Ошибка аутентификации.");
             }
 
             // Регистрация клиента на сервере
             server.addClient(user, this);
-            
+
+            // Создание экземпляра CommandExecutor для обработки клиентских команд.
+            CommandExecutor commandExecutor = new CommandExecutor(this);
+
             // Отправка приветственного сообщения и справки по командам
             writer.println("Добро пожаловать в чат, " + user.username() + "!");
             writer.println("Доступные команды:");
             writer.println("/w <никнейм> <сообщение> - личное сообщение");
             writer.println("/all - список пользователей");
-            writer.println("/name <новый_никнейм> - сменить никнейм");
             writer.println("/exit - выйти из чата");
             writer.println("/help - показать справку");
 
             // Основной цикл обработки сообщений
             String message;
             while (isConnected && (message = reader.readLine()) != null) {
-                if (message.equals("/exit")) {
-                    break;
-                } else if (message.equals("/all")) {
-                    writer.println(server.getClientsList());
-                } else if (message.startsWith("/w ")) {
-                    handlePrivateMessage(message);
-                } else {
-                    // Обычное сообщение для всех пользователей
-                    server.broadcastMessage(user.username(), message);
-                }
+                commandExecutor.execute(message.trim());
             }
         } catch (IOException e) {
             log.error("Ошибка в обработчике клиента {}", user.username(), e);
-        } finally {
+        } catch (ExitClientException e) {
+            log.info("Клиент {} отключился от сервера", (user != null) ? user.username() : "unknown user");
+        }
+        finally {
             disconnect();
+        }
+    }
+
+    /**
+     * Отправляет сообщение данному клиенту.
+     *
+     * @param message текст сообщения для отправки клиенту.
+     *                Если {@code null}, сообщение не отправляется.
+     */
+    public void sendMessage(String message) {
+        if (isConnected && writer != null && message != null) {
+            writer.println(message);
         }
     }
 
@@ -134,7 +150,7 @@ public class ClientHandler implements Runnable {
      *
      * @param command строка команды
      */
-    private void handlePrivateMessage(String command) {
+    public void handlePrivateMessage(String command) {
         String[] parts = command.split(" ", 3);
         if (parts.length < 3) {
             writer.println("Использование: /w <никнейм> <сообщение>");
@@ -144,18 +160,6 @@ public class ClientHandler implements Runnable {
         String recipient = parts[1];
         String message = parts[2].trim();
         server.sendPrivateMessage(user.username(), recipient, message);
-    }
-
-    /**
-     * Отправляет сообщение данному клиенту.
-     * 
-     * @param message текст сообщения для отправки клиенту.
-     *                Если {@code null}, сообщение не отправляется.
-     */
-    public void sendMessage(String message) {
-        if (isConnected && writer != null && message != null) {
-            writer.println(message);
-        }
     }
 
     /**

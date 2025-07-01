@@ -1,6 +1,5 @@
 package ru.gulash.server.server;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.gulash.server.auth.AuthenticationProvider;
 import ru.gulash.server.auth.InMemoryAuthenticationProvider;
@@ -59,7 +58,11 @@ public class ServerImpl {
                     Socket clientSocket = serverSocket.accept();
                     log.info("Новое подключение: {}", clientSocket.getInetAddress());
 
-                    ClientHandler clientHandler = new ClientHandler(clientSocket, this, authenticationProvider);
+                    ClientHandler clientHandler = new ClientHandler(
+                        clientSocket,
+                        this,
+                        authenticationProvider
+                    );
                     new Thread(clientHandler).start();
                 } catch (IOException e) {
                     if (running.get()) {
@@ -173,7 +176,7 @@ public class ServerImpl {
      * Ищет обработчик клиента по логину пользователя.
      *
      * @param login логин пользователя для поиска
-     * @return обработчик клиента, если пользователь найден, или null если пользователь не найден
+     * @return обработчик клиента, если пользователь найден, или null, если пользователь не найден
      */
     private ClientHandler findUser(String login) {
         return clients.entrySet().stream()
