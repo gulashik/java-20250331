@@ -15,6 +15,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Основная реализация сервера для чат-приложения.
+ *
+ * <p>Сервер использует многопоточную обработку клиентских подключений,
+ * где каждый клиент обрабатывается в отдельном потоке.</p>
  */
 @Slf4j
 public class ServerImpl {
@@ -34,6 +37,10 @@ public class ServerImpl {
      */
     private ServerSocket serverSocket;
 
+    
+    /**
+     * Провайдер аутентификации для проверки учетных данных пользователей.
+     */
     private final AuthenticationProvider authenticationProvider = new InMemoryAuthenticationProvider();
 
     /**
@@ -57,13 +64,15 @@ public class ServerImpl {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     log.info("Новое подключение: {}", clientSocket.getInetAddress());
-
+                    
+                    // Новый обработчик клиента в отдельном потоке
                     ClientHandler clientHandler = new ClientHandler(
                         clientSocket,
                         this,
                         authenticationProvider
                     );
                     new Thread(clientHandler).start();
+                    
                 } catch (IOException e) {
                     if (running.get()) {
                         log.error("Ошибка при принятии соединения", e);
@@ -157,6 +166,14 @@ public class ServerImpl {
             }
         }
     }
+
+     /**
+     * Отправляет служебное сообщение от одного клиента другому.
+     *
+     * @param sender    имя пользователя клиента, отправляющего сообщение
+     * @param recipient имя пользователя клиента, которому предназначено сообщение
+     * @param message   содержимое служебного сообщения; не должно быть null или пустым
+     */
     public void sendServiceMessage(String sender, String recipient, String message) {
         ClientHandler recipientHandler = findClientHandler(recipient);
         ClientHandler senderHandler = findClientHandler(sender);
@@ -168,7 +185,7 @@ public class ServerImpl {
                 senderHandler.sendMessage("[Вы -> " + recipient + "]: " + message);
             }
 
-            log.info("Личное сообщение от {} к {}: {}", sender, recipient, message);
+            log.info("Служебное сообщение от {} к {}: {}", sender, recipient, message);
         } else {
             if (senderHandler != null) {
                 senderHandler.sendMessage("Пользователь " + recipient + " не найден");
@@ -202,9 +219,5 @@ public class ServerImpl {
             .findFirst()
             .map(Map.Entry::getValue)
             .orElse(null);
-    }
-
-    public User findUserByLogin(String login) {
-        return findClientHandler(login).getUser();
     }
 }

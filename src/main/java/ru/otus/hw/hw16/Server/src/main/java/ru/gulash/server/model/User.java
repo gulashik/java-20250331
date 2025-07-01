@@ -1,4 +1,11 @@
 package ru.gulash.server.model;
 
-public record User(String username, String password, Role role) {
-}
+
+/**
+ * Запись, представляющая пользователя в системе.
+ */
+public record User(
+    String username,
+    String password,
+    Role role
+) {}

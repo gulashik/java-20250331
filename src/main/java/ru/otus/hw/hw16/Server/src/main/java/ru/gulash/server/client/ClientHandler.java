@@ -17,6 +17,9 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Обработчик клиентских подключений чат-сервера.
+ *
+ * <p>Каждый экземпляр класса работает в отдельном потоке и обслуживает
+ * одно клиентское подключение.</p>
  */
 @Slf4j
 public class ClientHandler implements Runnable {
@@ -38,6 +41,9 @@ public class ClientHandler implements Runnable {
     @Getter
     private PrintWriter writer;
 
+    /**
+     * Аутентифицированный пользователь, связанный с данным подключением.
+     */
     @Getter
     private User user;
 
@@ -47,13 +53,15 @@ public class ClientHandler implements Runnable {
     @Getter
     private final ServerImpl server;
 
+    /**
+     * Провайдер аутентификации для проверки учетных данных пользователя при подключении.
+     */
     private final AuthenticationProvider authenticationProvider;
 
 
     /**
      * Флаг состояния соединения с клиентом.
      */
-
     private boolean isConnected;
 
     /**
@@ -84,8 +92,7 @@ public class ClientHandler implements Runnable {
     /**
      * Основной метод выполнения потока обработчика клиента.
      * 
-     * <p>Метод блокирующий и выполняется до тех пор, пока клиент не отключится
-     * или не произойдет ошибка ввода/вывода.</p>
+     * <p>Метод блокирующий и выполняется до тех пор, пока клиент не отключится или не произойдет ошибка ввода/вывода.</p>
      */
     @Override
     public void run() {
@@ -102,7 +109,8 @@ public class ClientHandler implements Runnable {
 
             if (user == null) {
                 writer.println("Ошибка аутентификации. Клиентская сессия закрыта.");
-                throw new RuntimeException("Ошибка аутентификации.");
+                writer.println("/exit");
+                throw new ExitClientException("Ошибка аутентификации.");
             }
 
             // Регистрация клиента на сервере
@@ -113,7 +121,7 @@ public class ClientHandler implements Runnable {
 
             // Отправка приветственного сообщения и справки по командам
             writer.println("Добро пожаловать в чат, " + user.username() + "!");
-            writer.println("/help - показать справку");
+            writer.println("/help");
 
             // Основной цикл обработки сообщений
             String message;
@@ -159,6 +167,13 @@ public class ClientHandler implements Runnable {
         server.sendPrivateMessage(user.username(), recipient, message);
     }
 
+
+    /**
+     * Обрабатывает команду исключения пользователя из чата.
+     *
+     * @param command строка команды в формате "/kick никнейм".
+     *                Должна содержать два элемента: команду и никнейм пользователя.
+     */
     public void handleKickMessage(String command) {
         String[] parts = command.split(" ", 2);
         if (parts.length < 2) {
@@ -166,7 +181,7 @@ public class ClientHandler implements Runnable {
             return;
         }
 
-        // Проверить что пользователя ADMIN
+        // Авторизация по роли ADMIN
         if(!Role.hasAccess(user.role(), Role.ADMIN)) {
             writer.println("Нехватает прав для выполнения: /kick <никнейм>");
             return;

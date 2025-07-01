@@ -7,13 +7,39 @@ import ru.gulash.server.server.ServerImpl;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
+/**
+ * Класс отвечает за интерпретацию и выполнение команд, отправленных клиентом.
+ *
+ * <p>Каждый экземпляр CommandExecutor связан с конкретным {@link ClientHandler}
+ * и обрабатывает команды только для одного подключенного пользователя.</p>
+ */
 public class CommandExecutor {
 
+    /**
+     * Обработчик клиента, с которым связан данный исполнитель команд.
+     */
     private final ClientHandler clientHandler;
+
+    /**
+     * Экземпляр сервера для выполнения серверных операций.
+     */
     private final ServerImpl server;
+
+    /**
+     * Аутентифицированный пользователь, от имени которого выполняются команды.
+     */
     private final User user;
+
+    /**
+     * Поток для отправки данных клиенту.
+     */
     PrintWriter writer;
+
+    /**
+     * Поток для чтения данных от клиента.
+     */
     BufferedReader reader;
+    
     public CommandExecutor(ClientHandler clientHandler) {
         if (clientHandler == null) {
             throw new IllegalArgumentException("ClientHandler is null");
@@ -41,6 +67,12 @@ public class CommandExecutor {
         this.writer = clientHandler.getWriter();
     }
 
+    /**
+     * Выполняет обработку команды, полученной от клиента.
+     *
+     * @param message текст команды или сообщения от клиента
+     * @throws ExitClientException если получена команда выхода (/exit)
+     */
     public void execute(String message) {
 
         if (message.equals("/exit")) {

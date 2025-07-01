@@ -78,6 +78,8 @@ public class ChatImpl {
             log.error("Ошибка подключения к серверу", e);
             log.info("Не удалось подключиться к серверу: {}", e.getMessage());
         } finally {
+            log.warn("Отключение от сервера...");
+            log.info("Клиент отключен от {}", socket.getRemoteSocketAddress());
             disconnect();
         }
     }
@@ -100,9 +102,16 @@ public class ChatImpl {
         }
     }
 
+    /**
+     * Обрабатывает входящие сообщения от сервера.
+     *
+     * @param message входящее сообщение от сервера для обработки
+     */
     private void handleServerInput(String message) {
-        if (message.startsWith("/kick")) {
+        if (message.startsWith("/kick") || message.startsWith("/exit") ) {
             disconnect();
+        } else if (message.startsWith("/help")) {
+            showHelp();
         }
     }
 
@@ -217,8 +226,5 @@ public class ChatImpl {
         } catch (IOException e) {
             log.error("Ошибка при отключении", e);
         }
-
-        log.warn("Отключение от сервера...");
-        log.info("Клиент отключен от {}", socket.getRemoteSocketAddress());
     }
 }
