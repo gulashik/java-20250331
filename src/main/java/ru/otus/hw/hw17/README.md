@@ -18,7 +18,7 @@ podman ps -a
 clear
 podman compose logs -f postgres
 ```
-Если пользцемся PgAdmin
+Если пользуемся PgAdmin
 http://localhost:8080/
 Connection
     host: postgres
