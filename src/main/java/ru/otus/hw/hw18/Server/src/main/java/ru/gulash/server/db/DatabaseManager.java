@@ -1,0 +1,98 @@
+package ru.gulash.server.db;
+
+import lombok.SneakyThrows;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DatabaseManager {
+    private static final String DB_URL = "jdbc:h2:mem:authdb;DB_CLOSE_DELAY=-1";
+    private static final String DB_USER = "sa";
+    private static final String DB_PASSWORD = "";
+    
+    private static DatabaseManager instance;
+    private final Connection connection;
+    
+    private DatabaseManager() {
+        try {
+            connection = getConnection();
+            initializeDatabase();
+        } catch (SQLException e) {
+            throw new RuntimeException("Ошибка подключения к базе данных", e);
+        }
+    }
+    
+    public static synchronized DatabaseManager getInstance() {
+        if (instance == null) {
+            instance = new DatabaseManager();
+        }
+        return instance;
+    }
+    
+    @SneakyThrows
+    public Connection getConnection() {
+        return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+    }
+    
+    private void initializeDatabase() throws SQLException {
+        String createTableSQL = """
+            CREATE TABLE IF NOT EXISTS users (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(255) NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL,
+                role VARCHAR(50) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """;
+        
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(createTableSQL);
+            
+            // Добавляем пользователей по умолчанию
+            insertDefaultUsers();
+        }
+    }
+    
+    private void insertDefaultUsers() throws SQLException {
+        String insertSQL = """
+            INSERT INTO users (username, password, role) 
+            VALUES (?, ?, ?)
+        """;
+
+        try (var stmt = connection.prepareStatement(insertSQL)) {
+            // Администратор
+            stmt.setString(1, "admin");
+            stmt.setString(2, "admin123");
+            stmt.setString(3, "ADMIN");
+            stmt.executeUpdate();
+            
+            // Тестовые пользователи
+            stmt.setString(1, "user1");
+            stmt.setString(2, "user123");
+            stmt.setString(3, "USER");
+            stmt.executeUpdate();
+            
+            stmt.setString(1, "user2");
+            stmt.setString(2, "user123");
+            stmt.setString(3, "USER");
+            stmt.executeUpdate();
+            
+            stmt.setString(1, "user3");
+            stmt.setString(2, "user123");
+            stmt.setString(3, "USER");
+            stmt.executeUpdate();
+        }
+    }
+    
+    public void close() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
