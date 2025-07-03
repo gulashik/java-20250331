@@ -35,4 +35,9 @@ public interface AuthenticationProvider {
      * @return true, если пользователь удален успешно
      */
     boolean removeUser(String username);
+    
+    /**
+     * Останавливает провайдер аутентификации и освобождает ресурсы
+     */
+    void stop();
 }

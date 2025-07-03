@@ -8,6 +8,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Управляет подключениями к базе данных и запускает консоль H2.
+ */
 public class DatabaseManager implements AutoCloseable {
     private static final String DB_URL = "jdbc:h2:mem:authdb;DB_CLOSE_DELAY=-1";
     private static final String DB_USER = "sa";
@@ -23,15 +26,16 @@ public class DatabaseManager implements AutoCloseable {
             initializeDatabase();
             startH2Console();
 
-            // Добавляем shutdown hook для корректного закрытия ресурсов
-            // тут не уверен, как корректно закрыть
-            Runtime.getRuntime().addShutdownHook(new Thread(this::close));
-
         } catch (SQLException e) {
             throw new RuntimeException("Ошибка подключения к базе данных", e);
         }
     }
 
+    /**
+     * Возвращает единственный экземпляр DatabaseManager.
+     *
+     * @return Единственный экземпляр DatabaseManager
+     */
     public static synchronized DatabaseManager getInstance() {
         if (instance == null) {
             instance = new DatabaseManager();
@@ -39,11 +43,21 @@ public class DatabaseManager implements AutoCloseable {
         return instance;
     }
 
+    /**
+     * Создает и возвращает новое подключение к базе данных.
+     *
+     * @return Новое подключение к базе данных
+     * @throws SQLException если произошла ошибка доступа к базе данных
+     */
     @SneakyThrows
     public Connection getConnection() {
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
 
+    
+    /**
+     * Запускает веб-консоль H2.
+     */
     private void startH2Console() {
         try {
             // Запуск H2 Console на порту 8082
@@ -58,6 +72,11 @@ public class DatabaseManager implements AutoCloseable {
         }
     }
 
+    /**
+     * Инициализирует структуру базы данных.
+     *
+     * @throws SQLException если произошла ошибка при выполнении SQL-запросов
+     */
     private void initializeDatabase() throws SQLException {
         String createTableSQL = """
             CREATE TABLE IF NOT EXISTS users (
@@ -108,6 +127,9 @@ public class DatabaseManager implements AutoCloseable {
         }
     }
 
+    /**
+     * Закрывает все ресурсы базы данных, включая веб-сервер и подключение.
+     */
     @Override
     public void close() {
         if (webServer != null && webServer.isRunning(false)) {

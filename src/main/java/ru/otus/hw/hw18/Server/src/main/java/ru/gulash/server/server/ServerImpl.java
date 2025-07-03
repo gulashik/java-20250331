@@ -3,7 +3,6 @@ package ru.gulash.server.server;
 import lombok.extern.slf4j.Slf4j;
 import ru.gulash.server.auth.AuthenticationProvider;
 import ru.gulash.server.auth.H2AuthenticationProvider;
-import ru.gulash.server.auth.InMemoryAuthenticationProvider;
 import ru.gulash.server.client.ClientHandler;
 import ru.gulash.server.model.User;
 
@@ -92,12 +91,21 @@ public class ServerImpl {
      */
     public void stop() {
         running.set(false);
+
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
             }
         } catch (IOException e) {
             log.error("Ошибка при остановке сервера", e);
+        }
+
+        try {
+            if(authenticationProvider != null) {
+                authenticationProvider.stop();
+            }
+        } catch (Exception e) {
+            log.error("Ошибка при закрытии AuthenticationProvider", e);
         }
     }
 

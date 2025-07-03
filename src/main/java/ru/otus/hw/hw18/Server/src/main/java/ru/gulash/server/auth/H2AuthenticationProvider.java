@@ -111,4 +111,9 @@ public class H2AuthenticationProvider implements AuthenticationProvider {
             return false;
         }
     }
+
+    @Override
+    public void stop() {
+        DatabaseManager.getInstance().close();
+    }
 }

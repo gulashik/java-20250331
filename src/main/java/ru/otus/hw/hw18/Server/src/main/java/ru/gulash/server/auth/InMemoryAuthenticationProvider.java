@@ -50,4 +50,8 @@ public class InMemoryAuthenticationProvider implements AuthenticationProvider {
     public boolean removeUser(String username) {
         return users.remove(username) != null;
     }
+
+    @Override
+    public void stop() {
+    }
 }
