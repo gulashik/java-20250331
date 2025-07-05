@@ -14,6 +14,13 @@ mvn clean package
 clear
 java -jar ./Server/target/server-1.0.jar
 ```
+```bash 
+# pid запущенного сервера
+clear
+jps | grep server-1.0.jar 
+jps | grep ServerApp 
+```
+
 H2 Console 
     - Доступна по адресу: http://localhost:8082
     - Класс драйвера: org.h2.Driver

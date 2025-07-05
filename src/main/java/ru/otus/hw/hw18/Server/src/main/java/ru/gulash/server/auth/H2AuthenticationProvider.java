@@ -4,7 +4,6 @@ import ru.gulash.server.db.DatabaseManager;
 import ru.gulash.server.model.Role;
 import ru.gulash.server.model.User;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,10 +20,7 @@ public class H2AuthenticationProvider implements AuthenticationProvider {
     public User authenticate(String username, String password) {
         String sql = "SELECT username, password, role FROM users WHERE username = ? AND password = ?";
 
-        try (
-            Connection conn = dbManager.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+        try (PreparedStatement stmt = dbManager.getConnection().prepareStatement(sql)) {
 
             stmt.setString(1, username);
             stmt.setString(2, password);
@@ -57,8 +53,7 @@ public class H2AuthenticationProvider implements AuthenticationProvider {
 
         String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getConnection().prepareStatement(sql)) {
 
             stmt.setString(1, user.username());
             stmt.setString(2, user.password());
@@ -77,8 +72,7 @@ public class H2AuthenticationProvider implements AuthenticationProvider {
     public boolean userExists(String username) {
         String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
 
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getConnection().prepareStatement(sql)) {
 
             stmt.setString(1, username);
 
@@ -98,8 +92,7 @@ public class H2AuthenticationProvider implements AuthenticationProvider {
     public boolean removeUser(String username) {
         String sql = "DELETE FROM users WHERE username = ?";
 
-        try (Connection conn = dbManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = dbManager.getConnection().prepareStatement(sql)) {
 
             stmt.setString(1, username);
 

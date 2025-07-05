@@ -17,12 +17,12 @@ public class DatabaseManager implements AutoCloseable {
     private static final String DB_PASSWORD = "";
 
     private static DatabaseManager instance;
-    private final Connection connection;
+    private Connection connection;
     private Server webServer;
 
     private DatabaseManager() {
         try {
-            connection = getConnection();
+            connection = openConnection();
             initializeDatabase();
             startH2Console();
 
@@ -44,17 +44,30 @@ public class DatabaseManager implements AutoCloseable {
     }
 
     /**
-     * Создает и возвращает новое подключение к базе данных.
+     * Возвращает текущее подключение к базе данных. Если подключение закрыто,
+     * создает новое подключение.
      *
-     * @return Новое подключение к базе данных
-     * @throws SQLException если произошла ошибка доступа к базе данных
+     * @return Активное подключение к базе данных
      */
     @SneakyThrows
     public Connection getConnection() {
+       // перекоткрываем если закрыто
+        if(connection.isClosed()) {
+            connection = openConnection();
+        }
+        return connection;
+    }
+
+    /**
+     * Открывает новое подключение к базе данных.
+     *
+     * @return Новое подключение к базе данных
+     */
+    @SneakyThrows
+    private Connection openConnection() {
         return DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
     }
 
-    
     /**
      * Запускает веб-консоль H2.
      */
