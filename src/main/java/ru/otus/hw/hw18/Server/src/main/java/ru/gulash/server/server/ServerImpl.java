@@ -55,6 +55,11 @@ public class ServerImpl {
      * @throws RuntimeException если не удается создать серверный сокет.
      */
     public void start() {
+        // Неуверен в необходимости.
+        // Наткнулся в интернете, почитал, вроде подходит по смыслу.
+        // Автоматически запускает закрытие, когда JVM начинает процесс выключения
+        Runtime.getRuntime().addShutdownHook(new Thread(this::stop));
+
         try {
             serverSocket = new ServerSocket(PORT);
             running.set(true);
