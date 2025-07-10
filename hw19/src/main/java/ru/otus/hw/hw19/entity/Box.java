@@ -26,6 +26,10 @@ public class Box<T extends Fruit> {
         if (otherBox == null) {
             throw new IllegalArgumentException("Целевая коробка не может быть null");
         }
+        // не пытаемся перенести свои фрукты сами в себя.
+        if(otherBox == this) {
+            return;
+        }
         otherBox.fruits.addAll(this.fruits);
         this.fruits.clear();
     }

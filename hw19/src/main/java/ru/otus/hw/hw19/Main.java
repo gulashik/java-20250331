@@ -36,6 +36,7 @@ public class Main {
         System.out.println("Вес фруктов: " + fruitBox.getWeight());
 
         // Пересыпаем яблоки из одной коробки в другую
+        appleBox1.transferTo(appleBox1); // сами в себя
         appleBox1.transferTo(appleBox2);
         System.out.println("Количество яблок в первой коробке: " + appleBox1.countFruits()); // 0
         System.out.println("Количество яблок во второй коробке: " + appleBox2.countFruits()); // 2
