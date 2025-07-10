@@ -3,48 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>ru.otus.hw</groupId>
+        <artifactId>java-20250331</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-    <groupId>ru.otus.hw</groupId>
-    <artifactId>java-20250331</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>hw01</module>
-        <module>hw02</module>
-        <module>hw03</module>
-        <module>hw04</module>
-        <module>hw05</module>
-        <module>hw06</module>
-        <module>hw07</module>
-        <module>hw08</module>
-        <module>hw09</module>
-        <module>hw10</module>
-        <module>hw11</module>
-        <module>hw12</module>
-        <module>hw13</module>
-        <module>hw14</module>
-        <module>hw15</module>
-        <module>hw16</module>
-        <module>hw18</module>
-        <module>hw19</module>
-        <module>hw20</module>
-    </modules>
+    <artifactId>hw09</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
