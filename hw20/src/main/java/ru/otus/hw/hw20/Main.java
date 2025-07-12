@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
 
         try (Scanner scanner = new Scanner(System.in)) {
-            // Ввод имени файла
+
             System.out.print("Введите имя файла(00_prolog.txt,01_chapter_01.txt,02_chapter_02.txt): ");
             String fileName = "files/hw20/" + scanner.nextLine().trim();
 
@@ -35,7 +35,6 @@ public class Main {
                 return;
             }
 
-            // Выполнение поиска
             System.out.println("\nВыполняется поиск...");
             System.out.println("\n=== РЕЗУЛЬТАТ Scanner===");
             doSearch(() -> countSubstringInFile(fileName, searchSequence), fileName, searchSequence);

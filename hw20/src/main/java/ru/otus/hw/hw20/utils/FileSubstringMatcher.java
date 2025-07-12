@@ -25,7 +25,7 @@ public class FileSubstringMatcher {
         if (pattern == null || pattern.isEmpty()) {
             throw new IllegalArgumentException("Pattern cannot be null or empty");
         }
-        this.PATTERN = pattern;
+        PATTERN = pattern;
         MAX_LENGTH = pattern.length();
     }
 
