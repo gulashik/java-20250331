@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>ru.gulash</groupId>
-        <artifactId>chat-application</artifactId>
+        <artifactId>hw16</artifactId>
         <version>1.0</version>
     </parent>
 
