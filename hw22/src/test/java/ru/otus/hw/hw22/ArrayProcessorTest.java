@@ -67,7 +67,10 @@ class ArrayProcessorTest {
         @ParameterizedTest
         @MethodSource("containsOnlyOnesAndTwosSource")
         void containsOnlyOnesAndTwos(int[] testInput, boolean expectedOutput) {
-            assertEquals(expectedOutput, processor.containsOnlyOnesAndTwos(testInput));
+            assertEquals(expectedOutput,
+                processor.containsOnlyOnesAndTwos(testInput),
+                "Входной массив состоит только из чисел 1 и 2"
+            );
         }
 
         static Stream<Arguments> containsOnlyOnesAndTwosSource() {
