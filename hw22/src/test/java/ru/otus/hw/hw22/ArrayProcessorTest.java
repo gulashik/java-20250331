@@ -1,8 +1,11 @@
 package ru.otus.hw.hw22;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,36 +19,45 @@ class ArrayProcessorTest {
         processor = new ArrayProcessor();
     }
 
-    @Test
-    void getElementsAfterLastOne() {
-        // Arrange
-        int[] testInput1 = {1, 2, 3, 1, 4, 5, 6};
-        int[] expectedTest1 = {4, 5, 6};
+    @DisplayName("Тесты для метода getElementsAfterLastOne")
+    @Nested
+    class getElementsAfterLastOneTesting {
+        @DisplayName("Тесты для метода getElementsAfterLastOne без Exception")
+        @ParameterizedTest
+        @MethodSource("getElementsAfterLastOneSource")
+        void getElementsAfterLastOne(int[] testInput, int[] expectedOutput) {
+            assertArrayEquals(
+                expectedOutput,
+                processor.getElementsAfterLastOne(testInput),
+                "Cодержит элементы исходного массива, идущие после последней единицы"
+            );
+        }
 
-        int[] testInput2 = {2, 3, 4, 5};
-        // Ожидаем: RuntimeException
+        private static Stream<Arguments> getElementsAfterLastOneSource() {
+            return Stream.of(
+                Arguments.of(new int[]{1, 2, 3, 1, 4, 5, 6}, new int[]{4, 5, 6}),
+                Arguments.of(new int[]{1, 2, 3, 4, 1}, new int[]{}),
+                Arguments.of(new int[]{1}, new int[]{})
+            );
+        }
 
-        int[] test3 = {1, 2, 3, 4, 1};
-        int[] expectedTestInput3 = {};
+        @DisplayName("Тесты для метода getElementsAfterLastOne c Exception")
+        @ParameterizedTest
+        @MethodSource("getElementsAfterLastOneSourceException")
+        void getElementsAfterLastOneException(int[] testInput, Class<Exception> exceptionClass) {
+            assertThrows(
+                exceptionClass,
+                () -> processor.getElementsAfterLastOne(testInput),
+                "Если входной массив не содержит единиц, то должно быть брошено RuntimeException."
+            );
+        }
 
-        int[] testInput4 = {1};
-        int[] expectedTest4 = {};
-
-        // Act
-        processor = new ArrayProcessor();
-
-        // Assert
-        int[] actualTest1 = processor.getElementsAfterLastOne(testInput1);
-        assertArrayEquals(expectedTest1, actualTest1);
-
-        assertThrows(RuntimeException.class, () -> processor.getElementsAfterLastOne(testInput2));
-
-        int[] actualTest3 = processor.getElementsAfterLastOne(test3);
-        assertArrayEquals(expectedTestInput3, actualTest3);
-
-        int[] actualTest4 = processor.getElementsAfterLastOne(testInput4);
-        assertArrayEquals(expectedTest4, actualTest4);
-
+        private static Stream<Arguments> getElementsAfterLastOneSourceException() {
+            return Stream.of(
+                Arguments.of(new int[]{2}, RuntimeException.class),
+                Arguments.of(new int[]{}, RuntimeException.class)
+            );
+        }
     }
 
     @Test
@@ -67,7 +79,6 @@ class ArrayProcessorTest {
         boolean expectedTest5 = false;
 
         // Act
-        processor = new ArrayProcessor();
 
         // Assert
         boolean actualTest1 = processor.containsOnlyOnesAndTwos(testInput1);
