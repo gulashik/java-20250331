@@ -1,10 +1,20 @@
 package ru.otus.hw.hw22;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@DisplayName("Тесты по ArrayProcessor")
 class ArrayProcessorTest {
+
+    private ArrayProcessor processor;
+
+    @BeforeEach
+    void setUp() {
+        processor = new ArrayProcessor();
+    }
 
     @Test
     void getElementsAfterLastOne() {
@@ -22,7 +32,7 @@ class ArrayProcessorTest {
         int[] expectedTest4 = {};
 
         // Act
-        ArrayProcessor processor = new ArrayProcessor();
+        processor = new ArrayProcessor();
 
         // Assert
         int[] actualTest1 = processor.getElementsAfterLastOne(testInput1);
@@ -57,7 +67,7 @@ class ArrayProcessorTest {
         boolean expectedTest5 = false;
 
         // Act
-        ArrayProcessor processor = new ArrayProcessor();
+        processor = new ArrayProcessor();
 
         // Assert
         boolean actualTest1 = processor.containsOnlyOnesAndTwos(testInput1);
