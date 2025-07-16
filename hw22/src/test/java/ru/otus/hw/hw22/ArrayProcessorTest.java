@@ -19,7 +19,7 @@ class ArrayProcessorTest {
         processor = new ArrayProcessor();
     }
 
-    @DisplayName("Тесты для метода getElementsAfterLastOne")
+    @DisplayName("Группа тесты для метода getElementsAfterLastOne")
     @Nested
     class getElementsAfterLastOneTesting {
         @DisplayName("Тесты для метода getElementsAfterLastOne без Exception")
@@ -33,7 +33,7 @@ class ArrayProcessorTest {
             );
         }
 
-        private static Stream<Arguments> getElementsAfterLastOneSource() {
+         static Stream<Arguments> getElementsAfterLastOneSource() {
             return Stream.of(
                 Arguments.of(new int[]{1, 2, 3, 1, 4, 5, 6}, new int[]{4, 5, 6}),
                 Arguments.of(new int[]{1, 2, 3, 4, 1}, new int[]{}),
@@ -52,7 +52,7 @@ class ArrayProcessorTest {
             );
         }
 
-        private static Stream<Arguments> getElementsAfterLastOneSourceException() {
+         static Stream<Arguments> getElementsAfterLastOneSourceException() {
             return Stream.of(
                 Arguments.of(new int[]{2}, RuntimeException.class),
                 Arguments.of(new int[]{}, RuntimeException.class)
@@ -60,40 +60,24 @@ class ArrayProcessorTest {
         }
     }
 
-    @Test
-    void containsOnlyOnesAndTwos() {
-        // Arrange
-        int[] testInput1 = {1, 2};
-        boolean expectedTest1 = true;
+    @DisplayName("Группа тесты для метода containsOnlyOnesAndTwos")
+    @Nested
+    class containsOnlyOnesAndTwosTesting {
+        @DisplayName("Тесты для метода containsOnlyOnesAndTwos")
+        @ParameterizedTest
+        @MethodSource("containsOnlyOnesAndTwosSource")
+        void containsOnlyOnesAndTwos(int[] testInput, boolean expectedOutput) {
+            assertEquals(expectedOutput, processor.containsOnlyOnesAndTwos(testInput));
+        }
 
-        int[] testInput2 = {1, 2, 1, 2};
-        boolean expectedTest2 = true;
-
-        int[] testInput3 = {1, 1};
-        boolean expectedTest3 = false;
-
-        int[] testInput4 = {1, 3};
-        boolean expectedTest4 = false;
-
-        int[] testInput5 = {};
-        boolean expectedTest5 = false;
-
-        // Act
-
-        // Assert
-        boolean actualTest1 = processor.containsOnlyOnesAndTwos(testInput1);
-        assertEquals(expectedTest1, actualTest1);
-
-        boolean actualTest2 = processor.containsOnlyOnesAndTwos(testInput2);
-        assertEquals(expectedTest2, actualTest2);
-
-        boolean actualTest3 = processor.containsOnlyOnesAndTwos(testInput3);
-        assertEquals(expectedTest3, actualTest3);
-
-        boolean actualTest4 = processor.containsOnlyOnesAndTwos(testInput4);
-        assertEquals(expectedTest4, actualTest4);
-
-        boolean actualTest5 = processor.containsOnlyOnesAndTwos(testInput5);
-        assertEquals(expectedTest5, actualTest5);
+        static Stream<Arguments> containsOnlyOnesAndTwosSource() {
+            return Stream.of(
+                Arguments.of(new int[]{1, 2}, true),
+                Arguments.of(new int[]{1, 2, 1, 2}, true),
+                Arguments.of(new int[]{1, 1}, false),
+                Arguments.of(new int[]{1, 3}, false),
+                Arguments.of(new int[]{}, false)
+            );
+        }
     }
 }
