@@ -31,6 +31,7 @@
         <module>hw20</module>
         <module>hw21</module>
         <module>hw22</module>
+        <module>hw23</module>
     </modules>
 
     <properties>
