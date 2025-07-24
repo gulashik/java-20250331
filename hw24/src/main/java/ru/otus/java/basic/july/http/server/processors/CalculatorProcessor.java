@@ -1,6 +1,6 @@
 package ru.otus.java.basic.july.http.server.processors;
 
-import ru.otus.java.basic.july.http.server.HttpRequest;
+import ru.otus.java.basic.july.http.server.request.HttpRequest;
 import ru.otus.java.basic.july.http.server.error_handling.BadRequestException;
 
 import java.io.IOException;

@@ -2,6 +2,7 @@ package ru.otus.java.basic.july.http.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.java.basic.july.http.server.request.HttpServer;
 
 public class Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);

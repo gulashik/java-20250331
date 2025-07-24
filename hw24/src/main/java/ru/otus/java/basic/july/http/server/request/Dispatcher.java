@@ -1,4 +1,4 @@
-package ru.otus.java.basic.july.http.server;
+package ru.otus.java.basic.july.http.server.request;
 
 import com.google.gson.Gson;
 import ru.otus.java.basic.july.http.server.application.ItemsRepository;
@@ -49,6 +49,15 @@ public class Dispatcher {
                     "Content-Type: application/json\r\n" +
                     "\r\n" +
                     gson.toJson(errorDto);
+            output.write(response.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            ErrorDto errorDto = new ErrorDto("FATAL_ERROR", e.getMessage());
+            Gson gson = new Gson();
+            String response = "" +
+                "HTTP/1.1 500 Internal Server Errort\r\n" +
+                "Content-Type: application/json\r\n" +
+                "\r\n" +
+                gson.toJson(errorDto);
             output.write(response.getBytes(StandardCharsets.UTF_8));
         }
     }

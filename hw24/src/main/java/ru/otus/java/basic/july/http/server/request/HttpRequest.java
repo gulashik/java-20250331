@@ -1,9 +1,14 @@
-package ru.otus.java.basic.july.http.server;
+package ru.otus.java.basic.july.http.server.request;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
+    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+
     private String rawRequest;
     private String method;
     private String uri;
@@ -59,11 +64,11 @@ public class HttpRequest {
 
     public void info(boolean debug) {
         if (debug) {
-            System.out.println(rawRequest);
+            logger.info(rawRequest);
         }
-        System.out.println("METHOD: " + method);
-        System.out.println("URI: " + uri);
-        System.out.println("PARAMETERS: " + parameters);
-        System.out.println("BODY: " + body);
+        logger.info("METHOD: " + method);
+        logger.info("URI: " + uri);
+        logger.info("PARAMETERS: " + parameters);
+        logger.info("BODY: " + body);
     }
 }

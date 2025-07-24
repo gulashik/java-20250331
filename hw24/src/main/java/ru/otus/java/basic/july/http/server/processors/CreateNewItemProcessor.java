@@ -1,13 +1,12 @@
 package ru.otus.java.basic.july.http.server.processors;
 
 import com.google.gson.Gson;
-import ru.otus.java.basic.july.http.server.HttpRequest;
+import ru.otus.java.basic.july.http.server.request.HttpRequest;
 import ru.otus.java.basic.july.http.server.application.ItemsRepository;
 import ru.otus.java.basic.july.http.server.application.dtos.Item;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 
 public class CreateNewItemProcessor implements RequestProcessor {

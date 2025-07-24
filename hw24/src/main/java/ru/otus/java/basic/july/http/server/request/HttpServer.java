@@ -1,9 +1,14 @@
-package ru.otus.java.basic.july.http.server;
+package ru.otus.java.basic.july.http.server.request;
+
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpServer {
+    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+
     private int port;
     private Dispatcher dispatcher;
 
@@ -14,7 +19,7 @@ public class HttpServer {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Сервер запущен на порту: " + port);
+            logger.info("Сервер запущен на порту: " + port);
             while (true) {
                 try (Socket socket = serverSocket.accept()) {
                     byte[] buffer = new byte[8192];
