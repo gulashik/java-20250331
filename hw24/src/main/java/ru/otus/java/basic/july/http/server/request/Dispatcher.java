@@ -54,7 +54,7 @@ public class Dispatcher {
             ErrorDto errorDto = new ErrorDto("FATAL_ERROR", e.getMessage());
             Gson gson = new Gson();
             String response = "" +
-                "HTTP/1.1 500 Internal Server Errort\r\n" +
+                "HTTP/1.1 500 Internal Server Error\r\n" +
                 "Content-Type: application/json\r\n" +
                 "\r\n" +
                 gson.toJson(errorDto);

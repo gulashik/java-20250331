@@ -19,7 +19,7 @@ public class HttpServer {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            logger.info("Сервер запущен на порту: " + port);
+            logger.info("Сервер запущен на порту: {}", port);
             while (true) {
                 try (Socket socket = serverSocket.accept()) {
                     byte[] buffer = new byte[8192];
