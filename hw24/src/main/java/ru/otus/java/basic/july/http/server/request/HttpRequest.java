@@ -62,11 +62,11 @@ public class HttpRequest {
         body = rawRequest.substring(rawRequest.indexOf("\r\n\r\n") + 4);
     }
 
-    public void info(boolean debug) {
-        logger.info(rawRequest);
-        logger.info("METHOD: " + method);
-        logger.info("URI: " + uri);
-        logger.info("PARAMETERS: " + parameters);
-        logger.info("BODY: " + body);
+    public void info() {
+        logger.debug(rawRequest);
+        logger.info("METHOD: {}", method);
+        logger.info("URI: {}", uri);
+        logger.info("PARAMETERS: {}", parameters);
+        logger.info("BODY: {}", body);
     }
 }
